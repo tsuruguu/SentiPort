@@ -39,10 +39,15 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 from fastapi import BackgroundTasks
 
+import os
+
 
 @app.on_event("startup")
 def startup_event():
-    # Odpalamy generator 50 nominacji w tle przy starcie serwera
+    # ZABEZPIECZENIE: Nie seeduj bazy, jeśli jesteśmy w trybie testowym
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return
+
     from app.database import SessionLocal
     from seed.seed_data import seed_additional_nominations
 
