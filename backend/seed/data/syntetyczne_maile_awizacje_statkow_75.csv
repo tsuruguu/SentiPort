@@ -1,0 +1,2617 @@
+﻿id;style;subject;body
+1;formalny, kompletny;Pre-arrival notification – M/V Baltic Meridian – IMO 9384721 – Port Gdańsk;"Szanowny Panie Kapitanie Portu,
+
+działając jako agent armatora North Line Shipping Ltd., przekazuję zgłoszenie przed wejściem statku M/V Baltic Meridian do Portu Gdańsk.
+
+Dane statku:
+Nazwa: M/V Baltic Meridian
+IMO: 9384721
+MMSI: 261045890
+Sygnał wywoławczy: 9HA3210
+Bandera: Malta
+Typ statku: kontenerowiec
+LOA: 294,0 m
+Szerokość: 32,2 m
+Zanurzenie aktualne: 11,8 m
+GT: 66200
+
+Dane zawinięcia:
+Port docelowy: Gdańsk
+Terminal: Baltic Hub, T2
+ETA stacja pilotowa: 2026-06-27 06:30 LT
+ETA nabrzeże: 2026-06-27 08:00 LT
+ETD: 2026-06-28 19:00 LT
+Port poprzedni: Hamburg, Niemcy
+Port następny: Klaipeda, Litwa
+Cel zawinięcia: wyładunek i załadunek kontenerów
+
+Osoby na pokładzie:
+Załoga: 23
+Pasażerowie: 0
+Łącznie osób na pokładzie: 23
+
+Ładunek:
+Kontenery import/export, część w tranzycie. Na pokładzie znajdują się ładunki niebezpieczne klasy IMDG 3 oraz 8. Manifest DG i plan sztauerski zostaną przekazane w załącznikach.
+
+Odpady:
+Statek zgłasza do zdania 2,4 m3 wód zaolejonych oraz 1,1 m3 odpadów komunalnych. Pojemność magazynowa na pokładzie jest wystarczająca do kolejnego portu.
+
+Security:
+Poziom ochrony statku: ISPS 1.
+ISSC ważny.
+Nie odnotowano incydentów ochrony w ostatnich 10 zawinięciach.
+
+Uwagi techniczne:
+Brak usterek wpływających na bezpieczną żeglugę i manewrowanie. AIS sprawny.
+
+Prosimy o potwierdzenie przyjęcia zgłoszenia oraz przekazanie informacji o wymaganej asyście holowniczej i pilotażowej.
+
+Z poważaniem,
+Anna Nowak
+Baltic Agency Sp. z o.o.
+agent@balticagency.example
++48 500 100 200"
+2;formalny, zwięzły;Awizacja wejścia – M/T Amber Oil – IMO 9457812 – Naftoport Gdańsk;"Szanowni Państwo,
+
+w imieniu armatora Amber Tankers A/S zgłaszamy planowane wejście zbiornikowca M/T Amber Oil do Portu Gdańsk.
+
+Statek: M/T Amber Oil
+IMO: 9457812
+MMSI: 219004560
+Bandera: Dania
+Typ: oil tanker
+LOA: 183,5 m
+Szerokość: 32,0 m
+Zanurzenie: 10,6 m
+GT: 30250
+
+Port docelowy: Gdańsk
+Terminal: Naftoport
+ETA redy/stacji pilotowej: 2026-06-26 22:15 LT
+Planowane zacumowanie: 2026-06-27 00:30 LT
+Planowane wyjście: 2026-06-28 12:00 LT
+Port poprzedni: Rotterdam
+Port następny: Karlshamn
+
+Ładunek: olej napędowy, 28 000 t.
+Ładunek niebezpieczny: tak, UN 1202, klasa 3.
+Dokumenty: manifest ładunku, karta charakterystyki, deklaracja DG i plan rozmieszczenia w załącznikach.
+
+Załoga: 21 osób.
+Pasażerowie: 0.
+
+Odpady: sludge 4,0 m3, garbage 0,8 m3, brak ścieków do zdania.
+ISPS: poziom 1, ISSC ważny.
+Stan techniczny: brak usterek.
+
+Prosimy o informację dotyczącą pilota, holowników i okna wejściowego.
+
+Z poważaniem,
+Marek Lewandowski
+Port Service Agency"
+3;mniej formalny, czytelny;Zgłoszenie wejścia – M/V Pomerania Trader – Gdynia;"Dzień dobry,
+
+przesyłam zgłoszenie wejścia statku M/V Pomerania Trader do Portu Gdynia.
+
+Statek:
+- nazwa: M/V Pomerania Trader
+- IMO: 9175632
+- MMSI: 261098777
+- bandera: Polska
+- typ: drobnicowiec
+- długość: 118 m
+- szerokość: 18,5 m
+- zanurzenie: 6,2 m
+
+Plan:
+- port: Gdynia
+- nabrzeże: Indyjskie
+- ETA pilot: 2026-06-25 14:40
+- ETA nabrzeże: 2026-06-25 16:00
+- ETD: 2026-06-26 20:00
+- poprzedni port: Szczecin
+- następny port: Aarhus
+
+Ładunek:
+stal w kręgach i palety z elementami maszyn, łącznie ok. 4 800 t. Brak ładunków niebezpiecznych.
+
+Załoga: 14 osób, pasażerów brak.
+Odpady: do zdania 0,5 m3 garbage, bez odpadów olejowych.
+Security: ISPS 1, bez incydentów.
+Usterki: brak.
+
+Proszę o potwierdzenie, czy wymagany będzie jeden holownik przy podejściu do nabrzeża.
+
+Pozdrawiam,
+Piotr Zieliński
+agent statku"
+4;chaotyczny, ale sensowny;wejscie statku do Gdyni / info;"Dzień dobry,
+
+statek Sea Fox ma wejść do Gdyni, proszę przyjąć info do awizacji.
+
+Nazwa: M/V Sea Fox
+IMO 9045123
+MMSI 248123456
+bandera Malta
+typ: general cargo
+długość 96 m, szerokość 15,2 m, zanurzenie około 5,4 m
+
+ETA Gdynia pilot około 29.06.2026 godz. 07:00 lokalnego czasu, nabrzeże planowane Rumuńskie albo inne wg dyspozycji portu.
+Poprzedni port: Rostock.
+Następny port: Kopenhaga.
+Cel: rozładunek drobnicy, ok. 2100 ton.
+
+Nie ma DG, nie ma pasażerów, załoga 12.
+Odpady tylko zwykłe śmieci ok. 0,3 m3, olejowych nie zdaje.
+ISPS poziom 1.
+Kapitan zgłasza że AIS działa, brak awarii steru i napędu.
+
+Proszę dać znać czy pilot wystarczy bez holownika czy jednak wymagany holownik.
+
+Pozdrawiam
+Tomasz"
+5;formalny, prom ro-ro;Pre-arrival notification – Ro-Pax M/F Nordic Gate – Świnoujście;"Szanowny Kapitanacie Portu Świnoujście,
+
+w imieniu operatora Baltic Ferry Lines przekazujemy zgłoszenie przed wejściem promu M/F Nordic Gate.
+
+Dane jednostki:
+Nazwa: M/F Nordic Gate
+IMO: 9367104
+MMSI: 230987650
+Bandera: Finlandia
+Typ: ro-pax ferry
+LOA: 180,0 m
+Szerokość: 28,0 m
+Zanurzenie: 6,4 m
+GT: 35800
+
+Zawinięcie:
+Port: Świnoujście
+Terminal: Terminal Promowy Świnoujście
+ETA: 2026-06-24 05:45 LT
+ETD: 2026-06-24 08:30 LT
+Poprzedni port: Ystad
+Następny port: Ystad
+Cel: wyładunek i załadunek pojazdów oraz pasażerów
+
+Osoby:
+Załoga: 58
+Pasażerowie: 432
+Łącznie: 490
+
+Ładunek:
+Samochody osobowe, samochody ciężarowe, naczepy. Zgłoszono 3 jednostki CTU z ładunkami niebezpiecznymi klasy IMDG 3 i 9. Manifest DG w załączniku.
+
+Odpady:
+Garbage 2,5 m3, odpady gastronomiczne 1,2 m3, brak zgłoszenia sludge do odbioru.
+
+Security:
+Poziom ISPS 1, certyfikat ISSC ważny, brak incydentów.
+
+Prosimy o potwierdzenie zgody na wejście oraz aktualnego okna manewrowego.
+
+Z poważaniem,
+Katarzyna Wiśniewska
+Baltic Ferry Lines – Port Operations"
+6;techniczny, szczegółowy;NOA/Hazmat – M/V Silesian Bulk – IMO 9274480 – Świnoujście;"Szanowni Państwo,
+
+przekazujemy dane NOA oraz informację HAZMAT dla statku M/V Silesian Bulk.
+
+1. Vessel particulars
+Name: M/V Silesian Bulk
+IMO: 9274480
+MMSI: 636014222
+Call sign: D5AB8
+Flag: Liberia
+Type: bulk carrier
+LOA: 225,0 m
+Beam: 32,3 m
+Draft: 12,7 m
+GT: 43210
+DWT: 76500
+
+2. Port call
+Destination: Świnoujście
+Terminal/berth: terminal masowy
+ETA pilot station: 2026-06-30 03:20 LT
+ETD: 2026-07-02 18:00 LT
+Last port: Narvik, Norway
+Next port: Gdańsk, Poland
+Operation: discharge iron ore
+
+3. Cargo
+Iron ore, 72 000 t.
+Dangerous goods: no.
+Polluting cargo: no.
+
+4. Persons on board
+Crew: 22
+Passengers: 0
+Total POB: 22
+
+5. Waste
+Oily bilge water: 1,5 m3 to be delivered.
+Garbage: 0,7 m3 to be delivered.
+Cargo residues: not declared.
+Sufficient storage capacity until next port: yes.
+
+6. ISPS/security
+Security level: 1.
+ISSC valid until 2027-11-14.
+No ship-to-ship activity after last port.
+No security incidents.
+
+7. Technical condition
+No deficiencies affecting navigation, propulsion, steering, mooring or cargo handling.
+
+W załączeniu: FAL 1, crew list, waste notification, security pre-arrival form.
+
+Z poważaniem,
+Oceanic Port Agency"
+7;nieformalny, agent do kapitanatu;Mały masowiec do Kołobrzegu – awizacja;"Dzień dobry,
+
+mamy mały masowiec do Kołobrzegu, dane poniżej.
+
+M/V River Sand
+IMO: 8812456
+MMSI: 305998120
+Bandera: Antigua and Barbuda
+Typ: mini bulk carrier
+Długość: 82 m
+Szerokość: 12,8 m
+Zanurzenie: 4,6 m
+
+ETA Kołobrzeg: 2026-06-27 11:30
+Planowane nabrzeże: handlowe
+Poprzedni port: Sassnitz
+Następny port: Darłowo
+Ładunek: kruszywo, 1 900 t, rozładunek.
+DG: brak.
+Załoga: 8, pasażerowie: 0.
+Odpady: bez zdawania, pojemność wystarczająca.
+ISPS: 1.
+Awarii brak.
+
+Prosimy o potwierdzenie, czy przy aktualnym stanie wody wejście z zanurzeniem 4,6 m jest możliwe bez dodatkowych ograniczeń.
+
+Pozdrawiam,
+M. Kaczmarek"
+8;formalny, chemikaliowiec;Zgłoszenie HAZMAT i wejścia – M/T Vistula Chem – Port Gdynia;"Szanowni Państwo,
+
+działając w imieniu operatora Vistula Chemical Shipping, zgłaszamy planowane wejście statku M/T Vistula Chem do Portu Gdynia.
+
+Nazwa statku: M/T Vistula Chem
+IMO: 9512034
+MMSI: 261556700
+Bandera: Polska
+Typ: chemical tanker
+LOA: 145,6 m
+Szerokość: 23,0 m
+Zanurzenie: 8,1 m
+GT: 12800
+
+Port docelowy: Gdynia
+Terminal: terminal płynny
+ETA stacja pilotowa: 2026-06-26 18:45 LT
+ETA nabrzeże: 2026-06-26 20:00 LT
+ETD: 2026-06-27 23:00 LT
+Port poprzedni: Antwerpia
+Port następny: Gdańsk
+
+Ładunek:
+Metanol, 8 500 t.
+UN 1230, klasa IMDG 3, packing group II.
+Ładunek znajduje się w zbiornikach 1P/1S, 2P/2S, 3C.
+Manifest ładunku niebezpiecznego i SDS w załącznikach.
+
+Osoby na pokładzie:
+Załoga 19 osób, pasażerów brak.
+
+Odpady:
+Sludge 3,2 m3, garbage 0,4 m3. Prosimy o podstawienie odbioru odpadów olejowych.
+
+Security:
+ISPS level 1, ISSC ważny, brak incydentów ochrony.
+
+Stan techniczny:
+Brak usterek wpływających na bezpieczne wejście. Systemy łączności i AIS sprawne.
+
+Prosimy o potwierdzenie warunków wejścia, pilotażu i liczby holowników.
+
+Z poważaniem,
+Vistula Port Agency"
+9;półformalny, kontenerowiec;Awizacja kontenerowca – M/V Gdańsk Express;"Dzień dobry,
+
+w załączeniu i poniżej przekazujemy awizację dla M/V Gdańsk Express.
+
+M/V Gdańsk Express, IMO 9632107, MMSI 538009120, bandera Marshall Islands, kontenerowiec.
+Wymiary: LOA 366 m, beam 48,2 m, draft 14,2 m, GT 141000.
+Port docelowy: Gdańsk, Baltic Hub.
+ETA pilot station: 2026-07-01 04:00 LT.
+ETD: 2026-07-02 22:00 LT.
+Last port: Felixstowe.
+Next port: Helsinki.
+Operation: discharge/load containers.
+
+Persons on board: 27 crew, 0 passengers.
+Dangerous cargo: yes, IMDG classes 2.1, 3, 8, 9. Full DG manifest attached.
+Waste to deliver: bilge water 1,8 m3, garbage 1,6 m3.
+Security level: 1, no incidents.
+Technical deficiencies: none reported.
+
+Prosimy o potwierdzenie okna wejściowego i wymaganej asysty.
+
+Pozdrawiam,
+Port Operations Desk"
+10;mniej czytelny, skrótowy;ETA Szczecin - cargo;"Dzień dobry,
+
+zgłaszam:
+M/V Odra Star / IMO 9001187 / MMSI 261888111 / PL flag
+typ drobnica, LOA 87m, szer 13,5m, draft 4,9m.
+ETA Szczecin 26.06 09:00 pilot, nabrzeże do ustalenia przez port, rozładunek palet + big-bagów ok 1200t.
+Poprzedni port Gdynia, następny Hamburg.
+Crew 10, pax 0, DG no.
+Waste no delivery, ISPS 1, no defects.
+Kapitan prosi o info czy na wejściu potrzebny holownik, bo jednostka ma sprawny bow thruster.
+
+Pozdrawiam
+Agent"
+11;formalny, LNG;Pre-arrival security and port call notice – LNG/C Baltic Flame – Świnoujście LNG Terminal;"Dear Harbour Master's Office,
+
+On behalf of Baltic Gas Carriers Ltd., we hereby submit the pre-arrival notification for LNG/C Baltic Flame.
+
+Vessel particulars:
+Name: LNG/C Baltic Flame
+IMO: 9734568
+MMSI: 311000456
+Call sign: C6BF2
+Flag: Bahamas
+Type: LNG carrier
+LOA: 294,8 m
+Beam: 45,8 m
+Draft: 11,4 m
+GT: 115000
+
+Port call:
+Destination port: Świnoujście
+Terminal: LNG Terminal
+ETA pilot station: 2026-07-03 02:00 LT
+Estimated berthing: 2026-07-03 04:30 LT
+ETD: 2026-07-04 16:00 LT
+Last port: Ras Laffan, Qatar
+Next port: Zeebrugge, Belgium
+Purpose: discharge LNG
+
+Cargo:
+Liquefied natural gas, approximately 145 000 m3.
+Dangerous goods classification: UN 1972, class 2.1.
+Cargo documents and emergency contact details attached.
+
+Persons on board:
+Crew: 31
+Passengers: 0
+
+Waste:
+No sludge delivery requested. Garbage 0,9 m3 to be landed if reception facility is available.
+
+Security:
+ISPS level 1. ISSC valid. No security incidents, no unauthorized access and no ship-to-ship operations after departure from last port.
+
+Technical condition:
+No defects affecting navigation, propulsion, steering, mooring or cargo systems.
+
+Please confirm acceptance of this notification and advise pilotage/tug requirements.
+
+Kind regards,
+Baltic Gas Port Agency"
+12;bardzo formalny, administracyjny;Zgłoszenie planowanego zawinięcia statku M/V Mazovia Grain do Portu Gdynia;"Szanowni Państwo,
+
+niniejszym, jako upoważniony przedstawiciel armatora Mazovia Shipping Co., przekazuję zgłoszenie planowanego zawinięcia statku M/V Mazovia Grain do Portu Gdynia.
+
+1. Identyfikacja statku:
+- nazwa: M/V Mazovia Grain
+- numer IMO: 9310029
+- MMSI: 261332900
+- sygnał wywoławczy: SPGQ
+- bandera: Polska
+- typ: bulk carrier / grain carrier
+- długość całkowita: 156,4 m
+- szerokość: 24,0 m
+- zanurzenie: 8,3 m
+- GT: 18800
+
+2. Informacje o zawinięciu:
+- port docelowy: Gdynia
+- planowany terminal: terminal zbożowy
+- ETA stacja pilotowa: 2026-06-28 13:00 czasu lokalnego
+- ETA nabrzeże: 2026-06-28 14:30 czasu lokalnego
+- ETD: 2026-06-30 09:00 czasu lokalnego
+- port poprzedni: Szczecin
+- port następny: Bilbao
+- cel zawinięcia: załadunek zboża
+
+3. Informacje o ładunku:
+- pszenica, około 19 000 ton
+- ładunki niebezpieczne: nie dotyczy
+- pozostałości ładunkowe: nie dotyczy przed załadunkiem
+
+4. Osoby na pokładzie:
+- załoga: 17
+- pasażerowie: 0
+- łączna liczba osób: 17
+
+5. Odpady:
+- odpady komunalne: 0,6 m3
+- odpady olejowe: brak zgłoszenia do odbioru
+- pojemność magazynowa wystarczająca do kolejnego portu: tak
+
+6. Ochrona i bezpieczeństwo:
+- aktualny poziom ochrony: ISPS 1
+- certyfikat ISSC: ważny
+- incydenty ochrony: nie zgłoszono
+
+7. Stan techniczny:
+Statek nie zgłasza usterek mogących mieć wpływ na bezpieczeństwo żeglugi, manewrowania lub cumowania.
+
+Zwracam się z prośbą o potwierdzenie przyjęcia zgłoszenia.
+
+Z poważaniem,
+Joanna Król
+Mazovia Port Services"
+13;nieformalny, z prośbą;Darłowo – wejście małego statku z drewnem;"Dzień dobry,
+
+proszę o sprawdzenie możliwości wejścia do Darłowa dla M/V Pine Coast.
+
+Dane:
+Pine Coast, IMO 8844120, MMSI 304553210, bandera Antigua.
+Typ: general cargo.
+Długość 74 m, szerokość 11,5 m, zanurzenie 3,8 m.
+ETA Darłowo: 2026-06-29 ok. 15:00.
+Poprzedni port: Kalmar.
+Następny port: Kołobrzeg.
+Ładunek: drewno pakietowane, ok. 900 ton, rozładunek.
+DG brak.
+Załoga 7 osób, pasażerów brak.
+Odpady: brak zdawania.
+ISPS 1, brak awarii.
+
+Kapitan prosi o potwierdzenie warunków wejścia, bo jednostka jest blisko limitów długości dla portu.
+
+Pozdrawiam,
+Michał"
+14;formalny, statek rybacki;Zgłoszenie wejścia – F/V Hel Fisher – Port Władysławowo;"Szanowni Państwo,
+
+zgłaszamy planowane wejście statku rybackiego F/V Hel Fisher.
+
+Dane jednostki:
+Nazwa: F/V Hel Fisher
+IMO: nie dotyczy
+MMSI: 261701234
+Bandera: Polska
+Typ: fishing vessel
+Długość: 28,5 m
+Szerokość: 7,2 m
+Zanurzenie: 2,8 m
+
+Port docelowy: Władysławowo
+ETA: 2026-06-24 21:30 LT
+Cel wejścia: wyładunek ryb, uzupełnienie paliwa i zapasów
+Port poprzedni: łowisko Bałtyk
+Port następny: łowisko Bałtyk
+
+Osoby na pokładzie: 6 członków załogi.
+Ładunek: ryby świeże w skrzyniach, około 12 t.
+Ładunki niebezpieczne: brak.
+Odpady: odpady komunalne 0,1 m3, brak odpadów olejowych.
+Stan techniczny: sprawny, brak zgłoszonych awarii.
+Security: nie dotyczy w zakresie ISPS / brak incydentów.
+
+Prosimy o potwierdzenie dostępności miejsca przy nabrzeżu rybackim.
+
+Z poważaniem,
+Armator F/V Hel Fisher"
+15;półformalny, statek z awarią;Awizacja wejścia z informacją o usterce – M/V North Wind – Gdańsk;"Dzień dobry,
+
+zgłaszam planowane wejście M/V North Wind do Portu Gdańsk oraz informację o usterce technicznej.
+
+Dane statku:
+M/V North Wind
+IMO: 9123098
+MMSI: 248765432
+Bandera: Malta
+Typ: general cargo
+LOA: 132 m
+Beam: 19 m
+Draft: 7,0 m
+
+ETA stacja pilotowa Gdańsk: 2026-06-25 23:20 LT
+Planowane nabrzeże: drobnicowe
+Poprzedni port: Oslo
+Następny port: Gdynia
+Cel: rozładunek elementów stalowych, 3 200 t
+DG: brak
+Załoga: 15, pasażerowie: 0
+
+Usterka:
+Statek zgłasza ograniczoną sprawność steru strumieniowego dziobowego. Główne urządzenie sterowe i napęd główny są sprawne. Kapitan prosi o ocenę, czy wymagane będą dodatkowe holowniki.
+
+Odpady:
+Garbage 0,5 m3, bilge water 0,8 m3 do odbioru.
+
+ISPS:
+Poziom 1, brak incydentów.
+
+Pozdrawiam,
+Agent statku"
+16;angielski, bardzo formalny;Notice of Arrival – M/V Baltic Container – IMO 9812345 – Port of Gdańsk;"Dear Harbour Master,
+
+Please accept this Notice of Arrival for M/V Baltic Container, submitted on behalf of the vessel's operator.
+
+Vessel:
+Name: M/V Baltic Container
+IMO: 9812345
+MMSI: 563009876
+Call sign: 9VBC8
+Flag: Singapore
+Type: container ship
+LOA: 333.0 m
+Beam: 43.0 m
+Draft on arrival: 13.4 m
+GT: 98750
+
+Port call:
+Port of destination: Gdańsk
+Terminal: Baltic Hub
+ETA pilot station: 2026-07-05 09:15 LT
+ETA berth: 2026-07-05 11:00 LT
+ETD: 2026-07-06 23:30 LT
+Last port: Bremerhaven
+Next port: Tallinn
+Purpose of call: container discharge/loading
+
+Persons on board:
+Crew: 26
+Passengers: 0
+Total: 26
+
+Cargo:
+Containers. Dangerous goods on board: yes.
+IMDG classes: 2.2, 3, 6.1, 8 and 9.
+Dangerous goods manifest and stowage plan attached.
+
+Waste:
+Oily bilge water: 2.0 m3
+Garbage: 1.4 m3
+Sewage: no delivery requested
+
+Security:
+Ship security level 1.
+ISSC valid.
+No security incidents reported.
+
+Technical condition:
+No defects affecting safe navigation or manoeuvring.
+
+Kindly confirm pilotage and tug arrangements.
+
+Yours faithfully,
+Central Baltic Shipping Agency"
+17;krótki, roboczy;Wejście – M/V Small Star – Ustka;"Dzień dobry,
+
+proszę o przyjęcie awizacji:
+
+M/V Small Star
+IMO: 8700551
+MMSI: 261345678
+Bandera: Polska
+Typ: mały statek cargo
+LOA: 62 m
+Beam: 10,5 m
+Draft: 3,2 m
+
+ETA Ustka: 2026-06-26 10:00 LT
+Cel: rozładunek kruszywa, 650 t
+Poprzedni port: Gdynia
+Następny port: Darłowo
+Crew: 6
+Pax: 0
+DG: no
+Waste: no delivery
+ISPS: 1
+Defects: none
+
+Prosimy o potwierdzenie miejsca i warunków wejścia.
+
+Pozdrawiam"
+18;mniej czytelny, z błędami;statek do Elbląga;"Witam,
+
+statek Vistula Gate chce isc do Elbląga przez Nowy Świat, przesyłam dane jak mam od kapitana.
+
+Vistula Gate, IMO 8933102, mmsi 261770001, bandera PL, typ cargo river-sea.
+dł 72 m, szer 10,8, zanurz 2,9 m, air draft 12,5 m.
+ETA kanał/Nowy Świat 27.06.2026 13:00, ETA Elbląg 17:00.
+Port poprzedni Gdańsk, następny Elbląg tylko rozładunek i potem Gdańsk.
+Towar: nawozy w big bagach 420 t, nie DG wg dokumentów.
+Załoga 5, pasażerów zero.
+odpady nie zdaje, isps poziom 1, brak usterek.
+Prosimy potwierdzić przejście i czy trzeba coś dodatkowo zgłosić do mostów/śluzy.
+
+Pozdrawiam
+J."
+19;formalny, samochodowiec;Pre-arrival notification – M/V Car Baltic – Port Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane zawinięcie samochodowca M/V Car Baltic do Portu Gdynia.
+
+Dane statku:
+Nazwa: M/V Car Baltic
+IMO: 9500873
+MMSI: 538002219
+Bandera: Marshall Islands
+Typ: vehicle carrier
+LOA: 199,9 m
+Szerokość: 32,2 m
+Zanurzenie: 8,7 m
+GT: 58700
+
+Dane rejsu:
+Port docelowy: Gdynia
+Terminal: ro-ro
+ETA pilot station: 2026-07-02 06:45 LT
+ETA berth: 2026-07-02 08:00 LT
+ETD: 2026-07-03 14:00 LT
+Port poprzedni: Zeebrugge
+Port następny: Stockholm
+
+Ładunek:
+Samochody osobowe i maszyny rolnicze, łącznie 1 280 jednostek.
+Ładunki niebezpieczne: akumulatory litowo-jonowe w pojazdach elektrycznych, zgłoszone zgodnie z dokumentacją przewozową.
+
+Osoby:
+Załoga: 24
+Pasażerowie: 0
+
+Odpady:
+Garbage 1,0 m3, sludge 1,3 m3.
+
+Security:
+ISPS 1, ISSC ważny, brak incydentów.
+
+Stan techniczny:
+Brak usterek. Rampy statkowe sprawne.
+
+Prosimy o potwierdzenie okna wejściowego i wymogów dla rampy ro-ro.
+
+Z poważaniem,
+Baltic RoRo Agency"
+20;formalny, chłodniowiec;Zgłoszenie wejścia – Reefer M/V Frozen North – Port Gdańsk;"Szanowny Kapitanacie,
+
+w imieniu armatora North Reefers Ltd. przekazujemy zgłoszenie wejścia statku M/V Frozen North.
+
+Statek:
+Nazwa: M/V Frozen North
+IMO: 9145780
+MMSI: 257665410
+Bandera: Norwegia
+Typ: reefer carrier
+LOA: 149,3 m
+Beam: 22,0 m
+Draft: 7,2 m
+GT: 12200
+
+Zawinięcie:
+Port: Gdańsk
+Nabrzeże: chłodnicze/drobnicowe zgodnie z dyspozycją terminalu
+ETA: 2026-06-30 05:00 LT
+ETD: 2026-07-01 16:00 LT
+Last port: Reykjavik
+Next port: Gdynia
+Cel: rozładunek mrożonych ryb
+
+Ładunek:
+Mrożone ryby, 3 600 t, temperatura ładowni -20°C.
+DG: brak.
+
+Osoby:
+Załoga: 18
+Pasażerowie: 0
+
+Odpady:
+Garbage 0,6 m3, odpady spożywcze 0,4 m3.
+Odpady olejowe: brak zgłoszenia do odbioru.
+
+Security:
+ISPS poziom 1, brak incydentów.
+
+Techniczne:
+Brak awarii napędu, steru i systemów chłodniczych.
+
+Z poważaniem,
+North Reefers Agency"
+21;formalny, pogłębiarka;Zgłoszenie jednostki roboczej – Dredger Baltic Dune – Port Gdańsk;"Szanowni Państwo,
+
+zgłaszamy planowane wejście jednostki Dredger Baltic Dune do Portu Gdańsk.
+
+Dane jednostki:
+Nazwa: Dredger Baltic Dune
+IMO: 8990456
+MMSI: 244110987
+Bandera: Niderlandy
+Typ: dredger
+LOA: 98,0 m
+Szerokość: 20,0 m
+Zanurzenie: 5,8 m
+GT: 7450
+
+Plan:
+Port docelowy: Gdańsk
+Rejon pracy: tor podejściowy / akwen portowy według zgody portu
+ETA: 2026-06-28 04:00 LT
+Planowany okres postoju/pracy: 2026-06-28 do 2026-07-04
+Poprzedni port: Rotterdam
+Następny port: Gdańsk/reda
+
+Cel:
+Wejście w celu prowadzenia robót pogłębiarskich zgodnie ze zleceniem terminalu.
+
+Ładunek:
+Nie dotyczy.
+
+Osoby:
+Załoga: 16
+Pasażerowie: 0
+
+Odpady:
+Bilge water 1,0 m3, garbage 0,5 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek. Prosimy o przekazanie lokalnych ograniczeń ruchu i wymagań VTS dla prac na akwenie portowym.
+
+Z poważaniem,
+Dredging Operations Poland"
+22;nieformalny, krótki;Łeba – jacht komercyjny;"Dzień dobry,
+
+zgłaszam wejście jachtu komercyjnego S/Y Blue Weekend do Łeby.
+
+Dane:
+MMSI 261450321
+bandera Polska
+długość 18,2 m, szerokość 5,1 m, zanurzenie 2,2 m
+ETA Łeba: 25.06.2026 godz. 19:30
+port poprzedni: Hel
+następny: Władysławowo
+
+Na pokładzie: 2 załogi + 10 pasażerów, razem 12 osób.
+Cel: postój turystyczny, uzupełnienie wody.
+Ładunku brak, DG brak.
+Odpady: mała ilość garbage, do zdania ok. 0,05 m3.
+Brak usterek.
+
+Proszę o potwierdzenie miejsca postojowego.
+
+Pozdrawiam,
+kapitan S/Y Blue Weekend"
+23;formalny, pasażerski;Notice of Arrival – Passenger Vessel M/V Baltic Pearl – Gdańsk;"Szanowni Państwo,
+
+w imieniu operatora Baltic Coastal Cruises przekazujemy zgłoszenie przed wejściem statku pasażerskiego M/V Baltic Pearl.
+
+Dane statku:
+Nazwa: M/V Baltic Pearl
+IMO: 9210044
+MMSI: 209456700
+Bandera: Cypr
+Typ: passenger ship
+LOA: 172,0 m
+Szerokość: 25,5 m
+Zanurzenie: 6,6 m
+GT: 28100
+
+Port call:
+Port: Gdańsk
+Terminal: pasażerski
+ETA: 2026-07-08 07:00 LT
+ETD: 2026-07-08 18:00 LT
+Port poprzedni: Visby
+Port następny: Kopenhaga
+Cel: zawinięcie pasażerskie
+
+Osoby:
+Załoga: 120
+Pasażerowie: 640
+Łącznie: 760
+Lista załogi i pasażerów w załącznikach.
+
+Ładunek:
+Bagaż pasażerski i zapasy statkowe.
+DG: brak, z wyjątkiem standardowych zapasów eksploatacyjnych zgodnych z dokumentacją statku.
+
+Odpady:
+Garbage 5,0 m3, sewage 18,0 m3, odpady spożywcze 2,0 m3.
+
+Security:
+ISPS 1, ISSC ważny, brak incydentów.
+
+Zdrowie:
+Maritime Declaration of Health w załączniku. Brak zgłoszonych przypadków chorób zakaźnych.
+
+Stan techniczny:
+Brak usterek wpływających na wejście.
+
+Z poważaniem,
+Baltic Coastal Cruises"
+24;roboczy, agent terminalowy;Bulk cargo – Szczecin – M/V Coal Runner;"Dzień dobry,
+
+awizacja do Szczecina dla M/V Coal Runner.
+
+IMO: 9233400
+MMSI: 636017888
+Flag: Liberia
+Type: bulk carrier
+LOA 190 m / beam 28 m / draft 8,6 m
+ETA pilot: 2026-06-29 02:30
+ETA berth: 2026-06-29 07:00
+ETD: 2026-07-01 12:00
+Last port: Newcastle
+Next port: Riga
+
+Cargo: coal, 31 000 t, discharge.
+DG: no.
+Crew: 21, passengers: 0.
+Waste: bilge 0,7 m3, garbage 0,8 m3.
+ISPS: level 1.
+Defects: none.
+
+Prosimy o potwierdzenie przejścia torem wodnym i wymaganych holowników.
+
+Pozdrawiam,
+Operations"
+25;mniej czytelny, potoczny;prom do Świnoujścia;"Hej / dzień dobry,
+
+poniżej info dla promu, proszę potraktować jako awizację:
+
+M/F Baltic Road, IMO 9318881, MMSI 265123987, Szwecja, ro-pax
+długość 160m, szer 24m, zanurz 5,8m
+ETA Świnoujście 28.06 06:10 LT, terminal promowy
+wyjście plan 09:00
+przychodzi z Trelleborga, wraca do Trelleborga
+ludzie: crew 45, pax ok 300
+cargo: auta osobowe 90, ciężarowe 52, naczepy 30
+DG: 2 ciężarówki ADR, klasy 3 i 8, szczegóły w manifeście
+odpady: śmieci 1,5 m3, food waste 0,5
+ISPS 1, wszystko ok, awarii brak.
+
+Dajcie proszę znać czy okno 06:10 aktualne.
+
+Pozdrawiam"
+26;formalny, cementowiec;Awizacja wejścia – M/V Cement Baltic – Port Gdynia;"Szanowni Państwo,
+
+przekazujemy zgłoszenie planowanego wejścia statku M/V Cement Baltic.
+
+Statek:
+Nazwa: M/V Cement Baltic
+IMO: 9166677
+MMSI: 305776100
+Bandera: Antigua and Barbuda
+Typ: cement carrier
+LOA: 112,4 m
+Szerokość: 17,2 m
+Zanurzenie: 6,0 m
+GT: 7020
+
+Zawinięcie:
+Port: Gdynia
+Nabrzeże: terminal masowy
+ETA: 2026-06-27 03:30 LT
+ETD: 2026-06-28 13:00 LT
+Poprzedni port: Aalborg
+Następny port: Rostock
+Cel: rozładunek cementu luzem
+
+Ładunek:
+Cement luzem, 5 900 t.
+Ładunki niebezpieczne: nie.
+
+Osoby:
+Załoga: 11
+Pasażerowie: 0
+
+Odpady:
+Do zdania garbage 0,4 m3. Brak odpadów olejowych do odbioru.
+
+Security:
+Poziom ISPS 1, brak incydentów.
+
+Techniczne:
+Brak usterek wpływających na manewrowanie. System pneumatycznego rozładunku sprawny.
+
+Z poważaniem,
+Port Bulk Agency"
+27;formalny, gazowiec LPG;HAZMAT pre-arrival notice – LPG/C Baltic Gas – Gdańsk;"Dear Sir or Madam,
+
+Please find below the pre-arrival and HAZMAT notification for LPG/C Baltic Gas.
+
+Vessel:
+Name: LPG/C Baltic Gas
+IMO: 9467001
+MMSI: 538004567
+Flag: Marshall Islands
+Type: liquefied gas tanker
+LOA: 160.2 m
+Beam: 25.6 m
+Draft: 8.0 m
+GT: 18500
+
+Port call:
+Destination: Gdańsk
+Terminal: gas/liquid bulk terminal
+ETA pilot station: 2026-07-06 12:00 LT
+ETD: 2026-07-07 22:00 LT
+Last port: Teesport
+Next port: Klaipeda
+Purpose: discharge LPG
+
+Cargo:
+Propane/butane mixture, 12 000 m3.
+UN 1965, class 2.1.
+Cargo manifest and emergency contact details attached.
+
+Persons on board:
+Crew: 22
+Passengers: 0
+
+Waste:
+Sludge 2.1 m3, garbage 0.6 m3.
+
+Security:
+ISPS level 1. ISSC valid. No incidents.
+
+Technical condition:
+No defects. Cargo containment and safety systems operational.
+
+Kindly confirm pilotage, tug and terminal safety requirements.
+
+Best regards,
+Gas Marine Agency"
+28;krótki, kapitan bez agenta;Request to enter port – M/V Local Trader – Darłowo;"Dzień dobry,
+
+tu kapitan M/V Local Trader. Proszę o zgodę i warunki wejścia do portu Darłowo.
+
+IMO: 8810061
+MMSI: 261001234
+Bandera: Polska
+Typ: coaster
+LOA: 58 m
+Beam: 9,4 m
+Draft: 3,1 m
+ETA: 2026-06-24 16:00 LT
+Port poprzedni: Kołobrzeg
+Port następny: Ustka
+Ładunek: palety z materiałami budowlanymi, 350 t
+DG: nie
+Załoga: 5
+Pasażerowie: 0
+Odpady: brak zdawania
+Stan techniczny: bez usterek
+
+Pozdrawiam,
+kpt. Adam Wójcik"
+29;formalny, barka morska;Zgłoszenie wejścia zestawu holownik + barka – Port Szczecin;"Szanowni Państwo,
+
+zgłaszamy planowane wejście zestawu holowniczego do Portu Szczecin.
+
+Jednostka prowadząca:
+Tug M/V Strong Baltic
+IMO: 9022450
+MMSI: 261772300
+Bandera: Polska
+LOA: 32 m
+Beam: 10 m
+Draft: 4,0 m
+
+Jednostka holowana:
+Barge B-204
+IMO: nie dotyczy
+MMSI: brak
+LOA: 76 m
+Beam: 18 m
+Draft: 3,5 m
+
+Port docelowy: Szczecin
+Nabrzeże: przemysłowe
+ETA: 2026-06-26 06:00 LT
+ETD: 2026-06-27 18:00 LT
+Port poprzedni: Świnoujście
+Port następny: Szczecin / postój roboczy
+
+Ładunek:
+Elementy konstrukcji stalowych, 900 t, na barce B-204.
+Ładunki niebezpieczne: brak.
+
+Osoby:
+Załoga holownika: 6
+Pasażerowie: 0
+
+Odpady:
+Brak zgłoszenia do zdania.
+
+Security:
+ISPS 1, brak incydentów.
+
+Uwagi:
+Prosimy o potwierdzenie wymagań dotyczących prowadzenia zestawu i ewentualnej asysty w rejonie nabrzeża.
+
+Z poważaniem,
+Towage & Marine Services"
+30;półformalny, drobnica + DG;M/V East Wind – Gdynia – DG manifest attached;"Dzień dobry,
+
+zgłaszamy wejście M/V East Wind do Gdyni.
+
+Vessel details:
+M/V East Wind
+IMO 9204567
+MMSI 209334455
+Flag Cyprus
+General cargo ship
+LOA 134 m, beam 20 m, draft 7,4 m
+
+Port call:
+Port Gdynia, nabrzeże drobnicowe
+ETA pilot 2026-07-01 17:30 LT
+ETD 2026-07-03 08:00 LT
+Last port: Helsinki
+Next port: Hamburg
+Purpose: discharge project cargo and packed chemicals
+
+Cargo:
+- machinery parts, 1 100 t
+- packed chemicals, 180 t
+DG: yes, UN 1993, flammable liquid, class 3, PG III; UN 3265, corrosive liquid, class 8.
+DG manifest attached.
+
+POB:
+Crew 16, passengers 0.
+
+Waste:
+Garbage 0,5 m3; bilge water 0,6 m3.
+
+ISPS:
+Level 1, no security incidents.
+
+Technical:
+No defects reported.
+
+Prosimy o potwierdzenie przyjęcia zgłoszenia.
+
+Pozdrawiam,
+East Baltic Agency"
+31;bardzo krótki, niepełny ale sensowny;Awizacja – Ustka;"Dzień dobry,
+
+M/V Amber Coast, IMO 8709090, MMSI 261222333, PL flag, LOA 54 m, beam 9 m, draft 3,0 m.
+ETA Ustka 27.06.2026 08:20.
+Ładunek: kruszywo 500 t.
+Załoga 5, pasażerowie 0, DG brak, odpady brak, awarii brak.
+Proszę o potwierdzenie miejsca.
+
+Pozdrawiam"
+32;formalny, statek specjalny;Zgłoszenie wejścia statku badawczego R/V Copernicus – Gdynia;"Szanowni Państwo,
+
+w imieniu Instytutu Oceanografii zgłaszamy planowane wejście statku badawczego R/V Copernicus do Portu Gdynia.
+
+Dane jednostki:
+Nazwa: R/V Copernicus
+IMO: 9012341
+MMSI: 261444555
+Bandera: Polska
+Typ: research vessel
+LOA: 61,5 m
+Szerokość: 12,0 m
+Zanurzenie: 4,2 m
+GT: 2150
+
+Zawinięcie:
+Port: Gdynia
+Nabrzeże: wskazane przez kapitanat / armatora
+ETA: 2026-06-25 12:00 LT
+ETD: 2026-06-27 09:00 LT
+Port poprzedni: rejon badań Zatoki Gdańskiej
+Port następny: rejon badań Bałtyku
+Cel: wymiana zespołu badawczego, uzupełnienie zapasów, postój techniczny
+
+Osoby na pokładzie:
+Załoga: 14
+Personel naukowy: 10
+Łącznie: 24
+
+Ładunek:
+Sprzęt badawczy, próbki środowiskowe. Brak ładunków niebezpiecznych w rozumieniu IMDG.
+
+Odpady:
+Garbage 0,4 m3, ścieki 1,5 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek.
+
+Z poważaniem,
+Biuro Operacji Morskich"
+33;chaotyczny, agent poprawia ETA;UPDATE ETA - M/V Baltic Runner;"Dzień dobry,
+
+aktualizacja ETA dla M/V Baltic Runner do Gdańska.
+
+Było 26.06 04:00, nowe ETA pilot station: 26.06.2026 09:30 LT z powodu pogody.
+Reszta danych bez zmian:
+IMO 9334567, MMSI 636019990, Liberia, container feeder
+LOA 168 m, beam 27 m, draft 8,9 m.
+Terminal kontenerowy, Gdańsk.
+Last port: Helsinki, next port: Riga.
+Cargo: containers, DG yes small quantity IMDG 9, manifest attached previously.
+Crew 19, pax 0.
+Waste: garbage 0,7, bilge 0,5.
+ISPS 1, no defects.
+
+Proszę o potwierdzenie czy nowe okno wejściowe jest możliwe.
+
+Pozdrawiam
+Agent"
+34;formalny, zboże Szczecin;Awizacja statku M/V Harvest Moon – Port Szczecin;"Szanowni Państwo,
+
+zgłaszamy planowane zawinięcie statku M/V Harvest Moon.
+
+Dane:
+Nazwa: M/V Harvest Moon
+IMO: 9345012
+MMSI: 248992100
+Bandera: Malta
+Typ: bulk carrier
+LOA: 149,9 m
+Szerokość: 23,0 m
+Zanurzenie: 7,8 m
+GT: 16800
+
+Port docelowy: Szczecin
+Terminal: zbożowy
+ETA pilot station: 2026-07-04 18:30 LT
+ETA berth: 2026-07-04 23:00 LT
+ETD: 2026-07-06 13:00 LT
+Port poprzedni: Gdynia
+Port następny: Rotterdam
+
+Ładunek:
+Załadunek kukurydzy, około 16 500 t.
+Ładunki niebezpieczne: nie.
+
+Osoby:
+Załoga: 17
+Pasażerowie: 0
+
+Odpady:
+Garbage 0,5 m3, brak odbioru odpadów olejowych.
+
+Security:
+ISPS poziom 1, brak incydentów.
+
+Techniczne:
+Brak usterek. Statek posiada sprawny ster strumieniowy dziobowy.
+
+Prosimy o potwierdzenie warunków przejścia torem wodnym.
+
+Z poważaniem,
+Szczecin Maritime Agency"
+35;formalny, kontener feeder;Pre-arrival notice – M/V Feeder Polonia – Port Gdynia;"Dear Port Authority,
+
+Please find the pre-arrival notice for M/V Feeder Polonia.
+
+Vessel:
+M/V Feeder Polonia
+IMO: 9322456
+MMSI: 209987654
+Call sign: 5BFP9
+Flag: Cyprus
+Type: container feeder
+LOA: 170.1 m
+Beam: 27.6 m
+Draft: 8.5 m
+GT: 17300
+
+Port call:
+Destination: Gdynia
+Terminal: container terminal
+ETA pilot station: 2026-06-29 06:00 LT
+ETD: 2026-06-30 18:00 LT
+Last port: Klaipeda
+Next port: Hamburg
+Purpose: container operations
+
+Persons on board:
+Crew: 19
+Passengers: 0
+
+Cargo:
+Containers, 640 TEU total.
+Dangerous goods: IMDG class 9, 2 containers; DG manifest attached.
+
+Waste:
+Garbage 0.8 m3, oily bilge water 0.4 m3.
+
+Security:
+ISPS level 1, ISSC valid, no incidents.
+
+Technical:
+No deficiencies reported.
+
+Best regards,
+Container Line Agency"
+36;mniej formalny, Elbląg;Awizacja przejścia do Elbląga – M/V Żuławy;"Dzień dobry,
+
+zgłaszam wejście M/V Żuławy do Elbląga.
+
+Dane statku:
+IMO: 8601120
+MMSI: 261654321
+Bandera: Polska
+Typ: river-sea cargo
+LOA: 69 m
+Beam: 10,2 m
+Draft: 2,7 m
+Air draft: 11,8 m
+
+Plan:
+ETA Nowy Świat: 2026-06-28 09:00
+ETA Elbląg: 2026-06-28 13:00
+Poprzedni port: Gdańsk
+Następny port: Elbląg / potem Gdańsk
+Cel: rozładunek elementów betonowych, 300 t
+
+Na pokładzie:
+Załoga 5 osób, pasażerów brak.
+
+Ładunki niebezpieczne: brak.
+Odpady: brak zdawania.
+ISPS: poziom 1.
+Usterki: brak.
+
+Proszę o potwierdzenie możliwości przejścia i ewentualne dodatkowe instrukcje.
+
+Pozdrawiam,
+Agent"
+37;formalny, masowiec duży;NOA – M/V Iron Baltic – Świnoujście;"Szanowni Państwo,
+
+przekazujemy zgłoszenie przed wejściem statku M/V Iron Baltic.
+
+Dane statku:
+Nazwa: M/V Iron Baltic
+IMO: 9498765
+MMSI: 636018765
+Bandera: Liberia
+Typ: ore carrier / bulk carrier
+LOA: 249,9 m
+Szerokość: 43,0 m
+Zanurzenie: 13,1 m
+GT: 61500
+DWT: 105000
+
+Zawinięcie:
+Port docelowy: Świnoujście
+Terminal: masowy
+ETA stacja pilotowa: 2026-07-07 01:30 LT
+ETA nabrzeże: 2026-07-07 04:00 LT
+ETD: 2026-07-09 18:00 LT
+Port poprzedni: Narvik
+Port następny: Szczecin / według dyspozycji
+Cel: rozładunek rudy żelaza
+
+Ładunek:
+Ruda żelaza, 95 000 t.
+DG: nie.
+
+Osoby:
+Załoga: 24
+Pasażerowie: 0
+
+Odpady:
+Sludge 3,0 m3, garbage 1,0 m3.
+
+Security:
+Poziom ISPS 1, ISSC ważny.
+
+Stan techniczny:
+Brak usterek. Ze względu na parametry statku prosimy o potwierdzenie dopuszczalnego zanurzenia, okna wejściowego i wymaganej asysty holowniczej.
+
+Z poważaniem,
+Deep Sea Bulk Agency"
+38;krótki, terminal paliwowy;M/T Fuel Star – Gdańsk – pre-arrival;"Dzień dobry,
+
+zgłaszamy M/T Fuel Star do Gdańska.
+
+IMO: 9412340
+MMSI: 249112345
+Flag: Malta
+Type: product tanker
+LOA: 176 m
+Beam: 29 m
+Draft: 9,8 m
+ETA pilot: 2026-07-02 21:00
+Terminal: paliwowy
+Last port: Tallinn
+Next port: Copenhagen
+Cargo: gasoline, 22 000 t, UN 1203, class 3.
+Crew 20, pax 0.
+Waste: sludge 2 m3, garbage 0,5 m3.
+ISPS 1, no incidents.
+No technical defects.
+
+DG docs and SDS attached.
+
+Pozdrawiam,
+Agent"
+39;bardzo formalny, zdrowie pasażerów;Pre-arrival notification and Maritime Declaration of Health – M/V Coastal Queen;"Szanowni Państwo,
+
+w imieniu operatora Coastal Passenger Services przekazuję zgłoszenie planowanego wejścia statku pasażerskiego M/V Coastal Queen do Portu Gdynia.
+
+Dane statku:
+Nazwa: M/V Coastal Queen
+IMO: 9101234
+MMSI: 235009876
+Bandera: Wielka Brytania
+Typ: passenger ship
+LOA: 96,0 m
+Szerokość: 16,0 m
+Zanurzenie: 4,6 m
+GT: 5200
+
+Plan zawinięcia:
+Port: Gdynia
+Terminal/nabrzeże: pasażerskie
+ETA: 2026-06-30 08:00 LT
+ETD: 2026-06-30 20:00 LT
+Port poprzedni: Karlskrona
+Port następny: Visby
+Cel: obsługa pasażerów
+
+Osoby:
+Załoga: 32
+Pasażerowie: 188
+Łącznie: 220
+
+Zdrowie:
+Morska deklaracja zdrowia w załączniku. Brak zgłoszonych przypadków chorób zakaźnych, gorączki lub izolacji medycznej na pokładzie.
+
+Ładunek:
+Bagaż pasażerski i zapasy statkowe. Brak ładunków niebezpiecznych.
+
+Odpady:
+Garbage 1,2 m3, sewage 4,0 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek.
+
+Z poważaniem,
+Coastal Passenger Services"
+40;mniej czytelny, ale z kompletem danych;Gdańsk ETA 01/07 - ship notice;"Dzień dobry,
+
+statek M/V Orange Sky idzie do Gdańska, dane:
+IMO 9288001 / MMSI 255001908 / flag Madeira Portugal / call sign CQOS
+typ general cargo, dł 121, szer 19, zanurz 6.8
+ETA pilot 01.07.2026 03:50 LT, nabrzeże drobnicowe, ETD 02.07 15:00
+last port: Bilbao, next: Gdynia
+ładunek: części turbin wiatrowych 2200 t, ponadgabaryty
+DG nie
+crew 15, pax 0
+waste: bilge 0.5 m3, garbage 0.6 m3
+ISPS 1, ISSC ok, incydentów brak
+technicznie ok, ale kapitan prosi o większą ostrożność przy cumowaniu ze względu na ładunek na pokładzie.
+
+Proszę o potwierdzenie pilota/holownika.
+
+Pozdrawiam"
+41;formalny, statek z pasażerami i pojazdami;Awizacja wejścia – Ro-Pax M/F White Eagle – Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane wejście promu pasażersko-samochodowego M/F White Eagle.
+
+Dane:
+Nazwa: M/F White Eagle
+IMO: 9320199
+MMSI: 261888700
+Bandera: Polska
+Typ: ro-pax ship
+LOA: 175,0 m
+Szerokość: 27,7 m
+Zanurzenie: 6,2 m
+GT: 32100
+
+Zawinięcie:
+Port: Gdynia
+Terminal: promowy
+ETA: 2026-06-26 07:15 LT
+ETD: 2026-06-26 10:00 LT
+Port poprzedni: Karlskrona
+Port następny: Karlskrona
+
+Osoby:
+Załoga: 52
+Pasażerowie: 510
+Łącznie: 562
+
+Ładunek:
+Pojazdy osobowe, ciężarowe i naczepy.
+Ładunki niebezpieczne: 4 jednostki ADR, klasy 3, 8 i 9. Manifest DG w załączniku.
+
+Odpady:
+Odpady komunalne 2,8 m3, odpady kuchenne 0,7 m3, ścieki 9,0 m3.
+
+Security:
+ISPS poziom 1, brak incydentów.
+
+Techniczne:
+Brak usterek, rampy sprawne.
+
+Z poważaniem,
+Operator Promowy"
+42;formalny, statek wojskowy – uproszczony;Zgłoszenie wejścia jednostki państwowej – ORP Kaszub II – Port Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane wejście jednostki państwowej ORP Kaszub II do Portu Gdynia.
+
+Dane jednostki:
+Nazwa: ORP Kaszub II
+Bandera: Polska
+Typ: okręt wojenny / government non-commercial vessel
+Długość: 95,0 m
+Szerokość: 13,0 m
+Zanurzenie: 4,5 m
+MMSI: 261900001
+
+Plan:
+Port: Gdynia
+ETA: 2026-06-24 12:00 LT
+ETD: 2026-06-26 08:00 LT
+Cel: postój służbowy i uzupełnienie zapasów
+Port poprzedni: rejon ćwiczeń morskich
+Port następny: rejon ćwiczeń morskich
+
+Osoby:
+Załoga: 72
+Pasażerowie: 0
+
+Ładunek:
+Nie dotyczy w zakresie handlowym.
+Ładunki niebezpieczne: według odrębnych procedur służbowych.
+
+Odpady:
+Odpady komunalne 1,0 m3, brak zgłoszenia odpadów olejowych.
+
+Stan techniczny:
+Brak usterek wpływających na wejście.
+
+Prosimy o uzgodnienie miejsca postoju i zasad wejścia z właściwymi służbami portowymi.
+
+Z poważaniem,
+Oficer dyżurny"
+43;półformalny, ryby i chłodnia;Kołobrzeg – F/V Baltic Net – wejście;"Dzień dobry,
+
+zgłaszam wejście F/V Baltic Net do Kołobrzegu.
+
+MMSI: 261700321
+Bandera: Polska
+Typ: fishing vessel
+Długość 34 m, szerokość 8 m, zanurzenie 3 m.
+ETA: 2026-06-25 05:40.
+Cel: wyładunek ryb i postój 12 h.
+Poprzedni rejon: łowisko Bałtyk.
+Następny: łowisko Bałtyk.
+
+Załoga 8, pasażerów brak.
+Ładunek: ryby świeże 18 t.
+DG: brak.
+Odpady: 0,1 m3 garbage, inne nie.
+Stan techniczny: ok, AIS działa.
+
+Prosimy o potwierdzenie miejsca przy nabrzeżu rybackim.
+
+Pozdrawiam"
+44;formalny, drobnica Szczecin z awarią AIS;Zgłoszenie wejścia z uwagą techniczną – M/V Baltic Pine – Szczecin;"Szanowni Państwo,
+
+zgłaszamy planowane wejście statku M/V Baltic Pine do Portu Szczecin.
+
+Dane statku:
+Nazwa: M/V Baltic Pine
+IMO: 9088123
+MMSI: 304111908
+Bandera: Antigua and Barbuda
+Typ: general cargo
+LOA: 104,5 m
+Szerokość: 16,2 m
+Zanurzenie: 5,9 m
+
+Plan zawinięcia:
+ETA Świnoujście/pilot: 2026-06-28 22:00 LT
+ETA Szczecin: 2026-06-29 03:30 LT
+ETD: 2026-06-30 15:00 LT
+Port poprzedni: Lübeck
+Port następny: Gdańsk
+Cel: rozładunek drewna
+
+Ładunek:
+Drewno pakietowane, 2 400 t.
+DG: brak.
+
+Osoby:
+Załoga: 12
+Pasażerowie: 0
+
+Odpady:
+Garbage 0,4 m3, bilge water 0,5 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Uwaga techniczna:
+Kapitan zgłasza okresowe zakłócenia w pracy AIS. Urządzenie jest obecnie sprawne, lecz prosimy o odnotowanie tej informacji. Napęd i sterowanie są sprawne.
+
+Prosimy o potwierdzenie możliwości wejścia i ewentualne dodatkowe instrukcje VTS.
+
+Z poważaniem,
+Szczecin Ship Agency"
+45;angielski, krótki formalny;NOA – M/T Northern Product – Port of Gdynia;"Dear Sir or Madam,
+
+Please accept the Notice of Arrival for M/T Northern Product.
+
+Vessel: M/T Northern Product
+IMO: 9422110
+MMSI: 248990120
+Flag: Malta
+Type: product tanker
+LOA: 149.0 m
+Beam: 23.0 m
+Draft: 8.2 m
+
+Destination: Gdynia
+Terminal: liquid bulk terminal
+ETA pilot station: 2026-07-04 14:30 LT
+ETD: 2026-07-05 18:00 LT
+Last port: Riga
+Next port: Gdańsk
+
+Cargo: diesel oil, 9 600 t, UN 1202, class 3.
+Crew: 18
+Passengers: 0
+Waste: sludge 1.5 m3, garbage 0.4 m3.
+Security level: 1.
+Technical deficiencies: none.
+
+Hazmat declaration, cargo manifest and waste notification are attached.
+
+Best regards,
+Northern Product Agency"
+46;mniej formalny, prośba o zgodę specjalną;Prośba o warunki wejścia – jednostka blisko limitów – Kołobrzeg;"Dzień dobry,
+
+proszę o informację, czy możliwe będzie wejście M/V Sand Carrier do Kołobrzegu.
+
+Dane:
+IMO: 8900012
+MMSI: 305667888
+Bandera: Antigua
+Typ: mini bulk carrier
+LOA: 89 m
+Beam: 12,0 m
+Draft: 4,9 m
+
+ETA Kołobrzeg: 2026-06-30 06:30 LT
+Port poprzedni: Rostock
+Następny: Gdańsk
+Ładunek: piasek techniczny, 1 700 t, rozładunek.
+Załoga: 8, pasażerowie: 0.
+DG: brak.
+Odpady: brak zdawania.
+ISPS: 1.
+Usterki: brak.
+
+Ponieważ statek jest blisko parametrów granicznych dla portu, prosimy o potwierdzenie warunków wejścia, wymaganej pogody, stanu wody i ewentualnej zgody kapitanatu.
+
+Pozdrawiam,
+Agent"
+47;formalny, offshore supply;Pre-arrival notice – O/S Baltic Supporter – Port Gdańsk;"Szanowni Państwo,
+
+zgłaszamy planowane wejście jednostki offshore supply vessel O/S Baltic Supporter.
+
+Dane:
+Nazwa: O/S Baltic Supporter
+IMO: 9654321
+MMSI: 257123450
+Bandera: Norwegia
+Typ: offshore supply vessel
+LOA: 82,0 m
+Szerokość: 18,0 m
+Zanurzenie: 5,5 m
+GT: 4200
+
+Plan:
+Port docelowy: Gdańsk
+Nabrzeże: serwisowe / zgodnie z dyspozycją portu
+ETA: 2026-07-01 11:00 LT
+ETD: 2026-07-02 06:00 LT
+Port poprzedni: farma wiatrowa offshore
+Port następny: farma wiatrowa offshore
+Cel: uzupełnienie zapasów i wymiana części
+
+Ładunek:
+Części zamienne, kontenery serwisowe, zapasy techniczne.
+DG: 1 kontener z farbami technicznymi, UN 1263, klasa 3, ilość 1,2 t. Manifest w załączniku.
+
+Osoby:
+Załoga: 16
+Technicy: 12
+Łącznie: 28
+
+Odpady:
+Garbage 0,5 m3, bilge water 0,3 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Bez usterek.
+
+Z poważaniem,
+Offshore Marine Agency"
+48;chaotyczny, ale realny;M/V Old Town - Gdańsk dzisiaj/noc;"Dzień dobry,
+
+M/V Old Town będzie na Gdańsk, aktualnie ETA pilot 24.06.2026 23:50 LT, może być 30 min opóźnienia.
+IMO 8912340, MMSI 261300777, Polska bandera, general cargo.
+LOA 78m, szer. 12m, draft 4,4m.
+Nabrzeże drobnicowe, rozładunek 600 t palet, nie ma DG.
+Last port: Gdynia, next: Szczecin.
+Crew 8, pax 0.
+Waste: garbage 0,2m3 do zdania jeśli możliwe, bilge nie.
+ISPS 1.
+Usterki: nie ma, tylko proszę odnotować słabszy bow thruster, kapitan mówi że działa ale wolno reaguje.
+
+Prosimy o potwierdzenie wejścia i pilota.
+
+Pozdrawiam"
+49;formalny, prom szybki;Awizacja szybkiego statku pasażerskiego – HSC Baltic Arrow – Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane wejście szybkiego statku pasażerskiego HSC Baltic Arrow.
+
+Dane jednostki:
+Nazwa: HSC Baltic Arrow
+IMO: 9588002
+MMSI: 230778899
+Bandera: Finlandia
+Typ: high-speed passenger craft
+LOA: 72,0 m
+Szerokość: 18,0 m
+Zanurzenie: 2,7 m
+GT: 3900
+
+Port:
+Gdynia
+ETA: 2026-06-29 09:20 LT
+ETD: 2026-06-29 11:00 LT
+Port poprzedni: Visby
+Port następny: Visby
+Cel: obsługa pasażerów
+
+Osoby:
+Załoga: 12
+Pasażerowie: 210
+Łącznie: 222
+
+Ładunek:
+Bagaż pasażerski. Brak pojazdów i brak ładunków niebezpiecznych.
+
+Odpady:
+Garbage 0,4 m3, sewage 1,0 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Zdrowie:
+Morska deklaracja zdrowia w załączniku, brak zgłoszonych przypadków chorobowych.
+
+Techniczne:
+Brak usterek.
+
+Z poważaniem,
+Baltic HSC Operations"
+50;formalny, kontenerowiec z korektą zanurzenia;Correction of draft – M/V Ocean Link – Port Gdańsk;"Szanowni Państwo,
+
+w nawiązaniu do wcześniejszego zgłoszenia M/V Ocean Link przekazujemy korektę zanurzenia na wejściu.
+
+Dane statku:
+Nazwa: M/V Ocean Link
+IMO: 9765432
+MMSI: 563001234
+Bandera: Singapur
+Typ: container ship
+LOA: 399,0 m
+Szerokość: 59,0 m
+Zanurzenie po korekcie: 14,8 m
+GT: 196000
+
+Port:
+Gdańsk, Baltic Hub
+ETA pilot station: 2026-07-10 06:00 LT
+ETD: 2026-07-11 22:00 LT
+Port poprzedni: Rotterdam
+Port następny: Helsinki
+
+Ładunek:
+Kontenery import/export, DG manifest w załączniku. IMDG klasy 3, 8 i 9.
+
+Osoby:
+Załoga 29, pasażerowie 0.
+
+Odpady:
+Bilge water 2,5 m3, garbage 1,8 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek.
+
+Prosimy o potwierdzenie, czy skorygowane zanurzenie jest akceptowalne dla planowanego okna wejściowego.
+
+Z poważaniem,
+Ocean Link Agency"
+51;roboczy, bardzo praktyczny;Szczecin – M/V Timberline – awizacja;"Dzień dobry,
+
+M/V Timberline do Szczecina:
+IMO 9129988
+MMSI 305223344
+Flag Antigua
+General cargo
+LOA 115 m / beam 18 m / draft 6,1 m
+ETA Świnoujście 27.06 18:00
+ETA Szczecin 28.06 00:30
+ETD 29.06 12:00
+Cargo: timber packages 3 500 t, discharge
+DG: no
+Crew: 13, pax: 0
+Waste: garbage 0,4 m3
+ISPS 1
+Defects: none
+
+Prosimy o potwierdzenie pilota i holowników.
+
+Pozdrawiam"
+52;formalny, drobnica projektowa;Zgłoszenie wejścia – M/V Heavy Lift Baltic – Port Gdynia;"Szanowni Państwo,
+
+przekazujemy zgłoszenie wejścia statku M/V Heavy Lift Baltic.
+
+Dane statku:
+Nazwa: M/V Heavy Lift Baltic
+IMO: 9456670
+MMSI: 636011234
+Bandera: Liberia
+Typ: heavy lift / general cargo
+LOA: 153,0 m
+Szerokość: 24,0 m
+Zanurzenie: 7,9 m
+GT: 14800
+
+Port call:
+Port: Gdynia
+Nabrzeże: drobnicowe/projektowe
+ETA: 2026-07-03 05:00 LT
+ETD: 2026-07-05 20:00 LT
+Port poprzedni: Antwerpia
+Port następny: Gdańsk
+Cel: rozładunek elementów instalacji przemysłowej
+
+Ładunek:
+Ładunek projektowy, łącznie 2 800 t, w tym elementy ponadgabarytowe o długości do 38 m.
+Ładunki niebezpieczne: brak.
+
+Osoby:
+Załoga: 18
+Pasażerowie: 0
+
+Odpady:
+Bilge 0,8 m3, garbage 0,6 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Techniczne:
+Brak usterek. Dźwigi statkowe sprawne.
+
+Uwagi:
+Prosimy o uzgodnienie miejsca cumowania z uwzględnieniem pracy dźwigów i promienia operacyjnego.
+
+Z poważaniem,
+Project Cargo Agency"
+53;krótki, formalność minimalna;M/V Local Sand – Darłowo – ETA;"Dzień dobry,
+
+awizacja M/V Local Sand:
+IMO 8712121, MMSI 261111222, bandera PL, mini cargo.
+LOA 49 m, beam 8,5 m, draft 2,8 m.
+ETA Darłowo 26.06.2026 07:00.
+Cargo: piasek workowany 220 t.
+Crew 4, pax 0.
+DG no, waste no, ISPS 1, defects none.
+
+Proszę o potwierdzenie wejścia.
+
+Pozdrawiam"
+54;formalny, zgłoszenie wyjścia i wejścia;Port call notice – M/V Baltic Loop – Gdynia;"Szanowni Państwo,
+
+w imieniu Baltic Loop Shipping przekazujemy zgłoszenie zawinięcia statku M/V Baltic Loop.
+
+Dane statku:
+Nazwa: M/V Baltic Loop
+IMO: 9300011
+MMSI: 255004401
+Bandera: Portugalia
+Typ: container/ro-ro cargo ship
+LOA: 187,0 m
+Szerokość: 26,0 m
+Zanurzenie: 7,5 m
+
+Zawinięcie:
+Port docelowy: Gdynia
+Terminal: ro-ro/kontenerowy
+ETA: 2026-06-30 04:30 LT
+ETD: 2026-06-30 22:00 LT
+Port poprzedni: Tallinn
+Port następny: Hamburg
+Cel: przeładunek kontenerów i jednostek ro-ro
+
+Ładunek:
+Kontenery, naczepy i pojazdy ciężarowe.
+DG: 5 kontenerów IMDG klasy 9 i 1 kontener klasy 8. Manifest w załączniku.
+
+Osoby:
+Załoga: 20
+Pasażerowie: 0
+
+Odpady:
+Garbage 0,9 m3, bilge water 0,7 m3.
+
+Security:
+ISPS 1, ISSC ważny, bez incydentów.
+
+Stan techniczny:
+Brak usterek.
+
+Prosimy o potwierdzenie okna wejściowego oraz wymaganej asysty.
+
+Z poważaniem,
+Baltic Loop Shipping"
+55;mniej czytelny, brak polskich znaków;Zgloszenie statku - Swinoujscie;"Dzien dobry,
+
+prosze o przyjecie zgloszenia:
+M/V Baltic Coal
+IMO 9221010
+MMSI 636020202
+flag Liberia
+bulk carrier
+LOA 198m beam 30m draft 11.2m
+
+ETA Swinoujscie pilot 02.07.2026 10:00 LT
+terminal masowy, rozladunek wegla 42000 t
+last port Newcastle, next port Szczecin
+crew 22, passengers 0
+DG no
+waste: sludge 1.8 m3, garbage 0.7 m3
+ISPS level 1, no incidents
+defects none
+
+Prosze o potwierdzenie warunkow wejscia i holownikow.
+
+Pozdrawiam
+Agency"
+56;formalny, statek szkolny;Zgłoszenie wejścia statku szkolnego S/V Navigator – Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane wejście statku szkolnego S/V Navigator do Portu Gdynia.
+
+Dane statku:
+Nazwa: S/V Navigator
+IMO: 8001234
+MMSI: 261123789
+Bandera: Polska
+Typ: training vessel / sailing vessel
+LOA: 62,0 m
+Szerokość: 9,5 m
+Zanurzenie: 4,0 m
+GT: 950
+
+Plan zawinięcia:
+Port: Gdynia
+ETA: 2026-06-27 17:00 LT
+ETD: 2026-06-29 10:00 LT
+Port poprzedni: Visby
+Port następny: Gdańsk
+Cel: postój szkoleniowy, wymiana części załogi
+
+Osoby:
+Stała załoga: 10
+Praktykanci/studenci: 24
+Pasażerowie: 0
+Łącznie: 34
+
+Ładunek:
+Brak ładunku handlowego.
+
+Odpady:
+Garbage 0,5 m3, ścieki 1,0 m3.
+
+Security:
+Poziom ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek.
+
+Z poważaniem,
+Biuro Armatora"
+57;formalny, chłodniczy z żywnością;Pre-arrival notification – M/V Cold Wave – Port Gdynia;"Dear Harbour Master,
+
+Please find the pre-arrival notification for M/V Cold Wave.
+
+Vessel:
+Name: M/V Cold Wave
+IMO: 9134500
+MMSI: 258001223
+Flag: Norway
+Type: reefer carrier
+LOA: 137.5 m
+Beam: 21.0 m
+Draft: 7.1 m
+GT: 10100
+
+Port call:
+Destination: Gdynia
+ETA pilot station: 2026-07-06 05:40 LT
+ETD: 2026-07-07 16:00 LT
+Last port: Tromsø
+Next port: Hamburg
+Purpose: discharge frozen fish and seafood
+
+Cargo:
+Frozen fish and seafood, 2 900 t.
+Dangerous goods: no.
+
+Persons on board:
+Crew: 17
+Passengers: 0
+
+Waste:
+Food waste 0.3 m3, garbage 0.5 m3, no oily waste delivery requested.
+
+Security:
+ISPS level 1, no incidents.
+
+Technical:
+No defects reported. Refrigeration systems operational.
+
+Best regards,
+Reefer Marine Agency"
+58;półformalny, z pytaniem o nabrzeże;Prośba o wskazanie nabrzeża – M/V Baltic Tools – Gdańsk;"Dzień dobry,
+
+zgłaszamy statek M/V Baltic Tools do Gdańska i prosimy o wskazanie nabrzeża.
+
+Dane:
+IMO 9077008
+MMSI 305880012
+Bandera Antigua
+Typ: general cargo
+LOA 108 m
+Beam 16 m
+Draft 5,7 m
+
+ETA pilot: 2026-06-28 20:00 LT
+ETD: 2026-06-29 22:00 LT
+Poprzedni port: Hamburg
+Następny port: Gdynia
+
+Ładunek:
+Maszyny i narzędzia przemysłowe na paletach, 1 600 t.
+DG: brak.
+
+Osoby:
+Załoga 11, pasażerowie 0.
+
+Odpady:
+Garbage 0,3 m3, bilge water 0,4 m3.
+
+ISPS:
+Poziom 1, brak incydentów.
+
+Techniczne:
+Brak usterek.
+
+Prosimy o potwierdzenie przyjęcia zgłoszenia i wskazanie nabrzeża.
+
+Pozdrawiam,
+Agent"
+59;formalny, statek z ładunkiem zanieczyszczającym;Polluting cargo notification – M/T Black River – Port Gdańsk;"Szanowni Państwo,
+
+przekazujemy zgłoszenie wejścia i informację o ładunku zanieczyszczającym dla M/T Black River.
+
+Dane statku:
+Nazwa: M/T Black River
+IMO: 9432109
+MMSI: 538006789
+Bandera: Marshall Islands
+Typ: oil tanker
+LOA: 228,0 m
+Szerokość: 32,2 m
+Zanurzenie: 12,0 m
+GT: 42000
+
+Zawinięcie:
+Port: Gdańsk
+Terminal: paliwowy
+ETA stacja pilotowa: 2026-07-08 18:00 LT
+ETD: 2026-07-10 09:00 LT
+Port poprzedni: Primorsk
+Port następny: Rotterdam
+
+Ładunek:
+Ropa naftowa, 68 000 t.
+Ładunek zanieczyszczający: tak.
+Dokumenty ładunkowe, plan zbiorników i kontakt awaryjny w załącznikach.
+
+Osoby:
+Załoga: 24
+Pasażerowie: 0
+
+Odpady:
+Sludge 5,0 m3, garbage 0,8 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek wpływających na bezpieczne wejście, systemy przeciwpożarowe i gazowe sprawne.
+
+Prosimy o potwierdzenie procedury wejścia i wymogów terminalu.
+
+Z poważaniem,
+Tanker Port Services"
+60;bardzo nieformalny, nadal użyteczny;hej, statek do Łeby;"Dzień dobry,
+
+to nie jest duży statek, ale wysyłam komplet danych.
+
+S/Y Amber Trip
+MMSI 261456123
+Polska bandera
+jacht komercyjny
+długość 15,5 m, szerokość 4,6 m, zanurzenie 1,9 m
+ETA Łeba 28.06.2026 godz. 18:15
+płynie z Władysławowa, potem Hel
+na pokładzie 2 osoby załogi i 8 pasażerów
+ładunku brak, DG brak
+odpady tylko zwykłe śmieci mały worek, do zdania jeśli będzie możliwość
+awarii brak, radio i AIS działają
+
+Proszę o info, gdzie możemy stanąć.
+
+Pozdrawiam,
+Kuba"
+61;formalny, prom cargo ro-ro;Ro-ro cargo notice – M/V Trailer Bridge – Świnoujście;"Dear Port Operations,
+
+Please find below the pre-arrival notification for M/V Trailer Bridge.
+
+Vessel:
+Name: M/V Trailer Bridge
+IMO: 9347780
+MMSI: 265777001
+Flag: Sweden
+Type: ro-ro cargo ship
+LOA: 193.0 m
+Beam: 26.5 m
+Draft: 6.8 m
+GT: 30400
+
+Port call:
+Destination: Świnoujście
+Terminal: ferry/ro-ro terminal
+ETA: 2026-07-02 03:45 LT
+ETD: 2026-07-02 08:00 LT
+Last port: Trelleborg
+Next port: Trelleborg
+Purpose: discharge/load trailers and trucks
+
+Cargo:
+Trailers, trucks and ro-ro units.
+Dangerous goods: yes, ADR/IMDG units class 3 and 9, manifest attached.
+
+Persons on board:
+Crew: 38
+Passengers/drivers: 64
+Total: 102
+
+Waste:
+Garbage 1.2 m3, food waste 0.3 m3.
+
+Security:
+ISPS level 1, no incidents.
+
+Technical:
+No defects, ramps operational.
+
+Best regards,
+RoRo Port Agency"
+62;półformalny, Kołobrzeg drewno;M/V Forest Lady – Kołobrzeg;"Dzień dobry,
+
+zgłaszamy M/V Forest Lady do Kołobrzegu.
+
+Dane:
+IMO 8899011
+MMSI 305991100
+Bandera Antigua
+Typ: general cargo
+Długość 84 m, szerokość 12,5 m, zanurzenie 4,4 m
+
+ETA Kołobrzeg: 2026-07-01 12:00 LT
+ETD: 2026-07-02 18:00 LT
+Port poprzedni: Kalmar
+Port następny: Gdynia
+Ładunek: drewno pakietowane 1 500 t
+DG: brak
+Załoga: 8
+Pasażerowie: 0
+Odpady: garbage 0,2 m3
+Security: ISPS 1
+Usterki: brak
+
+Prosimy o potwierdzenie warunków wejścia.
+
+Pozdrawiam,
+Agent"
+63;formalny, kontenerowiec z dużą liczbą DG;DG pre-arrival notification – M/V Northern Boxes – Gdańsk;"Szanowni Państwo,
+
+w imieniu operatora Northern Boxes Line przekazujemy zgłoszenie wejścia statku M/V Northern Boxes wraz z informacją o ładunkach niebezpiecznych.
+
+Dane statku:
+Nazwa: M/V Northern Boxes
+IMO: 9751122
+MMSI: 565002211
+Bandera: Singapur
+Typ: container ship
+LOA: 299,9 m
+Szerokość: 40,0 m
+Zanurzenie: 12,9 m
+GT: 75500
+
+Port:
+Gdańsk, terminal kontenerowy
+ETA pilot station: 2026-07-09 02:30 LT
+ETD: 2026-07-10 20:00 LT
+Port poprzedni: Antwerpia
+Port następny: Helsinki
+
+Ładunek:
+Kontenery ładunkowe, puste i chłodnicze.
+Ładunki niebezpieczne:
+- UN 1203, klasa 3, benzyna, 2 kontenery
+- UN 1791, klasa 8, podchloryn, 1 kontener
+- UN 3077, klasa 9, substancja niebezpieczna dla środowiska, 4 kontenery
+- UN 1950, klasa 2.1, aerozole, 3 kontenery
+Manifest DG, numery kontenerów i plan sztauerski w załącznikach.
+
+Osoby:
+Załoga: 25
+Pasażerowie: 0
+
+Odpady:
+Bilge water 1,6 m3, garbage 1,2 m3.
+
+Security:
+ISPS 1, ISSC ważny, brak incydentów.
+
+Techniczne:
+Brak usterek.
+
+Prosimy o potwierdzenie przyjęcia dokumentacji DG i warunków wejścia.
+
+Z poważaniem,
+Northern Boxes Line Agency"
+64;mniej czytelny, skróty ang-pol;NOA Gdynia M/V Blue Pallet;"Dzień dobry,
+
+NOA for M/V Blue Pallet:
+IMO 9078122 / MMSI 210112233 / Cyprus flag / gen cargo
+LOA 101m, B 16m, draft 5.2m
+ETA Gdynia PS 30.06.2026 11:10 LT, berth drobnica, ETD 01.07 18:00
+last port Rostock, next port Klaipeda
+cargo: palletized goods 900 t + 2 containers spare parts
+DG: no
+crew 10, pax zero
+waste: garbage 0.25 m3, oily waste no
+security level 1, ISSC valid
+defects: none
+
+please confirm pilot/berth.
+
+Pozdrawiam"
+65;formalny, drobnicowiec z pasażerem technicznym;Zgłoszenie wejścia – M/V Technical Star – Port Szczecin;"Szanowni Państwo,
+
+zgłaszamy wejście statku M/V Technical Star do Portu Szczecin.
+
+Dane statku:
+Nazwa: M/V Technical Star
+IMO: 9098760
+MMSI: 305771122
+Bandera: Antigua and Barbuda
+Typ: general cargo
+LOA: 126,0 m
+Szerokość: 18,5 m
+Zanurzenie: 6,4 m
+
+Zawinięcie:
+ETA Świnoujście: 2026-07-02 14:00 LT
+ETA Szczecin: 2026-07-02 19:30 LT
+ETD: 2026-07-04 08:00 LT
+Port poprzedni: Hamburg
+Port następny: Gdańsk
+Cel: rozładunek urządzeń technicznych
+
+Osoby:
+Załoga: 14
+Pasażer techniczny/serwisowy: 1
+Łącznie: 15
+
+Ładunek:
+Urządzenia przemysłowe, 1 900 t.
+DG: brak.
+
+Odpady:
+Garbage 0,5 m3, bilge 0,4 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Techniczne:
+Brak usterek.
+
+Prosimy o potwierdzenie warunków wejścia.
+
+Z poważaniem,
+Technical Cargo Agency"
+66;krótki, po angielsku z błędami;Arrival info - M/V Sand Wave;"Good day,
+
+Please receive arrival info for M/V Sand Wave.
+
+IMO 8890003, MMSI 304009876, flag Antigua, mini bulk.
+LOA 79 m, beam 11.8 m, draft 4.1 m.
+ETA Kolobrzeg 03.07.2026 09:00 local.
+Cargo: gravel 1300 tons, no dangerous goods.
+Crew 7, passengers 0.
+Waste no delivery.
+Security level 1.
+No technical problems.
+
+Please confirm port entry conditions.
+
+Best regards,
+Agent"
+67;formalny, chemikalia pakowane;Zgłoszenie ładunków niebezpiecznych – M/V Baltic Parcel – Port Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane zawinięcie statku M/V Baltic Parcel oraz przewóz ładunków niebezpiecznych w opakowaniach.
+
+Dane statku:
+Nazwa: M/V Baltic Parcel
+IMO: 9188899
+MMSI: 209333111
+Bandera: Cypr
+Typ: general cargo ship
+LOA: 138,0 m
+Szerokość: 21,0 m
+Zanurzenie: 7,0 m
+
+Port:
+Gdynia
+ETA: 2026-07-05 16:20 LT
+ETD: 2026-07-06 23:00 LT
+Port poprzedni: Hamburg
+Port następny: Tallinn
+
+Ładunek:
+Drobnica paletyzowana, części maszyn, chemikalia w opakowaniach.
+Ładunki niebezpieczne:
+UN 1263, farba, klasa 3, PG III, 14 palet.
+UN 1760, ciecz żrąca, klasa 8, 6 palet.
+UN 3077, substancja zagrażająca środowisku, klasa 9, 10 palet.
+Manifest DG i lokalizacja na statku w załączniku.
+
+Osoby:
+Załoga: 16
+Pasażerowie: 0
+
+Odpady:
+Garbage 0,4 m3, bilge water 0,5 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek.
+
+Z poważaniem,
+Parcel Marine Agency"
+68;mniej formalny, brak załączników;Gdańsk – statek z nawozami;"Dzień dobry,
+
+wysyłam awizację dla M/V Fertilizer Coast.
+
+IMO: 9200110
+MMSI: 636015432
+Bandera: Liberia
+Typ: bulk carrier
+LOA: 180 m
+Beam: 28 m
+Draft: 9,5 m
+
+ETA Gdańsk: 2026-07-04 22:00 LT
+Terminal: masowy
+Last port: Klaipeda
+Next port: Szczecin
+Cargo: nawozy luzem, 26 000 t.
+DG: według dokumentów brak klasyfikacji IMDG.
+Crew: 21, passengers: 0.
+Waste: garbage 0,7 m3, sludge 1,0 m3.
+ISPS 1.
+Defects none.
+
+Dokumenty ładunkowe doślemy po otrzymaniu aktualnej wersji od kapitana.
+
+Pozdrawiam,
+Agent"
+69;formalny, statek z awarią napędu pomocniczego;Pre-arrival notice with technical deficiency – M/V Silver Coast – Port Gdynia;"Szanowni Państwo,
+
+zgłaszamy planowane wejście statku M/V Silver Coast do Portu Gdynia wraz z informacją o usterce technicznej.
+
+Dane:
+Nazwa: M/V Silver Coast
+IMO: 9199001
+MMSI: 255007700
+Bandera: Portugalia
+Typ: general cargo
+LOA: 143,0 m
+Szerokość: 22,0 m
+Zanurzenie: 7,2 m
+
+Port:
+Gdynia
+ETA pilot station: 2026-07-06 02:00 LT
+ETD: 2026-07-07 17:00 LT
+Port poprzedni: Rotterdam
+Port następny: Gdańsk
+Cel: rozładunek konstrukcji stalowych
+
+Ładunek:
+Konstrukcje stalowe, 3 700 t.
+DG: brak.
+
+Osoby:
+Załoga: 17
+Pasażerowie: 0
+
+Odpady:
+Bilge water 0,7 m3, garbage 0,5 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Usterka:
+Jeden z agregatów pomocniczych jest wyłączony z eksploatacji. Pozostałe źródła zasilania są sprawne. Napęd główny, ster i urządzenia cumownicze są sprawne. Kapitan deklaruje gotowość do wejścia przy standardowej lub zwiększonej asyście zgodnie z decyzją kapitanatu.
+
+Prosimy o potwierdzenie warunków wejścia.
+
+Z poważaniem,
+Silver Marine Agency"
+70;krótki, Ustka turystyczny;S/Y North Trip – wejście do Ustki;"Dzień dobry,
+
+S/Y North Trip, MMSI 261555999, bandera Polska, jacht rekreacyjny.
+LOA 13,2 m, beam 4,1 m, draft 1,8 m.
+ETA Ustka: 2026-06-29 17:45.
+Port poprzedni: Łeba, następny: Kołobrzeg.
+Na pokładzie 6 osób.
+Ładunku i DG brak.
+Odpady: brak zdawania.
+Usterki: brak.
+
+Proszę o miejsce postojowe.
+
+Pozdrawiam"
+71;formalny, masowiec biomasa;Awizacja wejścia – M/V Green Bulk – Port Szczecin;"Szanowni Państwo,
+
+zgłaszamy planowane wejście statku M/V Green Bulk.
+
+Dane statku:
+Nazwa: M/V Green Bulk
+IMO: 9311770
+MMSI: 538001177
+Bandera: Marshall Islands
+Typ: bulk carrier
+LOA: 177,0 m
+Szerokość: 28,0 m
+Zanurzenie: 8,4 m
+
+Zawinięcie:
+Port docelowy: Szczecin
+Terminal: masowy
+ETA Świnoujście: 2026-07-08 06:00 LT
+ETA Szczecin: 2026-07-08 11:30 LT
+ETD: 2026-07-10 14:00 LT
+Port poprzedni: Riga
+Port następny: Amsterdam
+
+Ładunek:
+Biomasa / pellet drzewny, 24 000 t.
+Ładunki niebezpieczne: brak według dokumentacji przewozowej.
+Uwaga: ładunek wrażliwy na zawilgocenie.
+
+Osoby:
+Załoga: 21
+Pasażerowie: 0
+
+Odpady:
+Garbage 0,8 m3, bilge 0,6 m3.
+
+Security:
+ISPS 1, brak incydentów.
+
+Stan techniczny:
+Brak usterek. Luki ładunkowe sprawne i szczelne.
+
+Z poważaniem,
+Green Bulk Agency"
+72;mniej czytelny, dużo skrótów;ETA GDY M/V Quick Load;"Dzien dobry,
+
+ETA GDY for Quick Load:
+IMO 9088776 MMSI 209909090 flag CYP
+gen cargo LOA 99/B15/D5.0
+ETA PS 07.07.2026 04:20 LT, ETD 08.07 12:00
+berth: drobnica if available
+last: Rostock, next: Helsinki
+cargo: packed food products 700t + empty pallets
+DG no
+POB crew 9, pax 0
+waste G 0.2, bilge no
+ISPS 1, no sec incidents
+def no.
+
+Pls confirm pilot/berth.
+
+Regards"
+73;formalny, statek sanitarny/specjalny;Zgłoszenie wejścia jednostki specjalnej M/V Rescue Baltic – Port Gdańsk;"Szanowni Państwo,
+
+zgłaszamy planowane wejście jednostki specjalnej M/V Rescue Baltic.
+
+Dane:
+Nazwa: M/V Rescue Baltic
+IMO: 9019090
+MMSI: 261990123
+Bandera: Polska
+Typ: rescue vessel / state service vessel
+LOA: 48,0 m
+Szerokość: 11,0 m
+Zanurzenie: 3,5 m
+
+Plan:
+Port: Gdańsk
+ETA: 2026-06-25 06:00 LT
+ETD: 2026-06-26 06:00 LT
+Port poprzedni: rejon działań SAR
+Port następny: rejon działań SAR
+Cel: uzupełnienie paliwa, wody i sprzętu medycznego
+
+Osoby:
+Załoga: 12
+Personel medyczny: 4
+Pasażerowie: 0
+Łącznie: 16
+
+Ładunek:
+Sprzęt ratowniczy i medyczny, bez ładunków handlowych.
+DG: standardowe materiały eksploatacyjne zgodnie z dokumentacją jednostki.
+
+Odpady:
+Odpady komunalne 0,2 m3, odpady medyczne 0,05 m3 zgodnie z procedurą.
+
+Security:
+Brak incydentów, poziom ochrony zgodnie z procedurami służbowymi.
+
+Stan techniczny:
+Brak usterek.
+
+Z poważaniem,
+Dyspozytor Operacyjny"
+74;formalny, kontenerowiec z odpadami;Advance waste and arrival notification – M/V Baltic Stack – Port Gdańsk;"Dear Harbour Master,
+
+Please find the pre-arrival and advance waste notification for M/V Baltic Stack.
+
+Vessel:
+Name: M/V Baltic Stack
+IMO: 9711002
+MMSI: 563220011
+Flag: Singapore
+Type: container ship
+LOA: 260.0 m
+Beam: 37.0 m
+Draft: 11.6 m
+GT: 52000
+
+Port call:
+Destination: Gdańsk
+Terminal: container terminal
+ETA pilot station: 2026-07-12 07:30 LT
+ETD: 2026-07-13 18:00 LT
+Last port: Hamburg
+Next port: Riga
+Purpose: container operations
+
+Cargo:
+Containers. Dangerous goods: IMDG class 9 only, 5 containers. Manifest attached.
+
+Persons on board:
+Crew: 24
+Passengers: 0
+
+Waste to be delivered:
+Oily bilge water: 3.0 m3
+Sludge: 1.2 m3
+Garbage: 1.5 m3
+Plastic waste: 0.2 m3
+Sewage: no delivery requested
+The vessel has sufficient storage capacity until the next port after planned delivery.
+
+Security:
+ISPS level 1, no incidents.
+
+Technical condition:
+No defects.
+
+Kind regards,
+Baltic Stack Agency"
+75;mieszany formalno-roboczy, końcowa aktualizacja;Final update before arrival – M/V Last Minute – Gdynia;"Dzień dobry,
+
+przekazujemy końcową aktualizację przed wejściem M/V Last Minute do Portu Gdynia.
+
+Statek:
+M/V Last Minute
+IMO: 9109876
+MMSI: 255009901
+Bandera: Portugalia
+Typ: general cargo
+LOA: 129,0 m
+Beam: 19,0 m
+Draft: 6,6 m
+
+Plan:
+ETA pilot station Gdynia: 2026-06-24 23:10 LT
+ETA berth: 2026-06-25 00:20 LT
+ETD: 2026-06-26 08:00 LT
+Last port: Aarhus
+Next port: Gdańsk
+Purpose: discharge steel coils
+
+Cargo:
+Steel coils, 2 600 t.
+Dangerous goods: no.
+
+Persons on board:
+Crew: 15
+Passengers: 0
+
+Waste:
+Garbage 0,5 m3, bilge water 0,4 m3.
+
+Security:
+ISPS 1, no security incidents.
+
+Technical:
+No defects. AIS, VHF, steering and main engine operational.
+
+Uprzejmie prosimy o potwierdzenie ostatecznego okna wejściowego oraz wymagań dotyczących holownika.
+
+Pozdrawiam,
+Port Agent"
