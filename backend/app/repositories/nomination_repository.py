@@ -77,3 +77,55 @@ def update_nomination_with_llm_data(
     db.commit()
     db.refresh(nomination)
     return nomination
+
+
+# ---------------------------------------------------------------------------
+# Akcje agenta portowego: zatwierdzenie nabrzeża, zmiana statusu, edycja pól.
+# Wszystkie operują na już istniejącej nominacji (walidacja "czy istnieje"
+# i logika biznesowa są w nomination_review_service.py - tutaj tylko zapis).
+# ---------------------------------------------------------------------------
+
+def set_assigned_berth(db: Session, nomination: Nomination, berth_id: Optional[uuid.UUID]) -> Nomination:
+    """Zapisuje nabrzeże PRZYDZIELONE przez agenta portowego (po przeglądzie
+    TOP-3 rekomendacji). berth_id=None czyści przypisanie (np. agent zmienił zdanie)."""
+    nomination.assigned_berth_id = berth_id
+    db.add(nomination)
+    db.commit()
+    db.refresh(nomination)
+    return nomination
+
+
+def set_status(db: Session, nomination: Nomination, new_status: NominationStatus) -> Nomination:
+    nomination.status = new_status
+    db.add(nomination)
+    db.commit()
+    db.refresh(nomination)
+    return nomination
+
+
+# Pola, które agent portowy może bezpiecznie poprawić ręcznie po przeglądzie
+# wyniku ekstrakcji AI. Celowo NIE obejmuje email_hash, source_email_* (to
+# audyt oryginalnej wiadomości) ani llm_extraction_metadata (to ślad tego,
+# co faktycznie zwrócił agent - nie nadpisujemy historii).
+EDITABLE_NOMINATION_FIELDS = {
+    "vessel_id", "nominating_company_id", "nominating_contact_id",
+    "destination_port_id", "requested_berth_id", "eta", "etd",
+    "assigned_agent_name", "mentor_contact_note",
+}
+
+
+def update_nomination_fields(db: Session, nomination: Nomination, fields: dict) -> Nomination:
+    """
+    Nadpisuje wskazane pola nominacji wartościami podanymi przez agenta
+    portowego (np. korekta błędnie wyciągniętej ETA). Tylko pola z
+    EDITABLE_NOMINATION_FIELDS są stosowane - inne są ignorowane, nawet
+    jeśli ktoś by je przesłał.
+    """
+    for field_name, value in fields.items():
+        if field_name in EDITABLE_NOMINATION_FIELDS:
+            setattr(nomination, field_name, value)
+
+    db.add(nomination)
+    db.commit()
+    db.refresh(nomination)
+    return nomination

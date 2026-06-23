@@ -43,3 +43,22 @@ class DatabaseConstraintError(AppException):
             status_code=409,
             payload={"details": details}
         )
+
+
+class InvalidStatusTransitionError(AppException):
+    def __init__(self, current_status: str, requested_status: str):
+        super().__init__(
+            message=f"Nie można zmienić statusu z '{current_status}' na '{requested_status}' - "
+                    f"'{current_status}' jest statusem końcowym.",
+            status_code=400,
+            payload={"current_status": current_status, "requested_status": requested_status}
+        )
+
+
+class InvalidBerthAssignmentError(AppException):
+    def __init__(self, details: str):
+        super().__init__(
+            message="Nie można przypisać tego nabrzeża do nominacji.",
+            status_code=400,
+            payload={"details": details}
+        )

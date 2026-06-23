@@ -202,3 +202,150 @@ def test_recommended_berths_endpoint_404_when_nomination_missing(mock_get_nomina
     response = client.get(f"/api/v1/nominations/{mock_uuid}/recommended-berths")
 
     assert response.status_code == 404
+
+
+@patch("app.api.v1.nominations.nomination_view_service.get_nomination_detail")
+@patch("app.api.v1.nominations.nomination_review_service.assign_berth")
+def test_assign_berth_endpoint_success(mock_assign, mock_get_detail, client, mock_uuid):
+    from datetime import datetime, timezone
+    from app.schemas.nomination_detail import NominationDetailResponse
+
+    berth_id = str(__import__("uuid").uuid4())
+    mock_get_detail.return_value = NominationDetailResponse(
+        nomination_id=mock_uuid,
+        status="parsed_pending_review",
+        created_at=datetime(2026, 6, 23, tzinfo=timezone.utc),
+        updated_at=datetime(2026, 6, 23, tzinfo=timezone.utc),
+    )
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/assign-berth", json={"berth_id": berth_id})
+
+    assert response.status_code == 200
+    mock_assign.assert_called_once()
+    call_args = mock_assign.call_args.args
+    assert str(call_args[2]) == berth_id
+
+
+@patch("app.api.v1.nominations.nomination_view_service.get_nomination_detail")
+@patch("app.api.v1.nominations.nomination_review_service.assign_berth")
+def test_assign_berth_endpoint_allows_null_to_clear(mock_assign, mock_get_detail, client, mock_uuid):
+    from datetime import datetime, timezone
+    from app.schemas.nomination_detail import NominationDetailResponse
+
+    mock_get_detail.return_value = NominationDetailResponse(
+        nomination_id=mock_uuid, status="parsed_pending_review",
+        created_at=datetime(2026, 6, 23, tzinfo=timezone.utc), updated_at=datetime(2026, 6, 23, tzinfo=timezone.utc),
+    )
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/assign-berth", json={"berth_id": None})
+
+    assert response.status_code == 200
+    call_args = mock_assign.call_args.args
+    assert call_args[2] is None
+
+
+@patch("app.api.v1.nominations.nomination_review_service.assign_berth")
+def test_assign_berth_endpoint_400_on_invalid_assignment(mock_assign, client, mock_uuid):
+    from app.core.exceptions import InvalidBerthAssignmentError
+
+    mock_assign.side_effect = InvalidBerthAssignmentError(details="Nabrzeże z innego portu")
+
+    response = client.post(
+        f"/api/v1/nominations/{mock_uuid}/assign-berth",
+        json={"berth_id": str(__import__("uuid").uuid4())}
+    )
+
+    assert response.status_code == 400
+
+
+@patch("app.api.v1.nominations.nomination_view_service.get_nomination_detail")
+@patch("app.api.v1.nominations.nomination_review_service.change_status")
+def test_change_status_endpoint_success(mock_change_status, mock_get_detail, client, mock_uuid):
+    from datetime import datetime, timezone
+    from app.schemas.nomination_detail import NominationDetailResponse
+
+    mock_get_detail.return_value = NominationDetailResponse(
+        nomination_id=mock_uuid, status="verified",
+        created_at=datetime(2026, 6, 23, tzinfo=timezone.utc), updated_at=datetime(2026, 6, 23, tzinfo=timezone.utc),
+    )
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/status", json={"status": "verified"})
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "verified"
+    mock_change_status.assert_called_once()
+
+
+@patch("app.api.v1.nominations.nomination_review_service.change_status")
+def test_change_status_endpoint_400_on_terminal_status_violation(mock_change_status, client, mock_uuid):
+    from app.core.exceptions import InvalidStatusTransitionError
+
+    mock_change_status.side_effect = InvalidStatusTransitionError(current_status="completed", requested_status="verified")
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/status", json={"status": "verified"})
+
+    assert response.status_code == 400
+
+
+def test_change_status_endpoint_422_on_invalid_status_value(client, mock_uuid):
+    """Status spoza enuma powinien zostać odrzucony przez walidację
+    Pydantic na poziomie schematu, zanim trafi do serwisu."""
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/status", json={"status": "nieistniejacy_status"})
+
+    assert response.status_code == 422
+
+
+@patch("app.api.v1.nominations.nomination_view_service.get_nomination_detail")
+@patch("app.api.v1.nominations.nomination_review_service.update_fields")
+def test_update_fields_endpoint_success(mock_update_fields, mock_get_detail, client, mock_uuid):
+    from datetime import datetime, timezone
+    from app.schemas.nomination_detail import NominationDetailResponse
+
+    mock_get_detail.return_value = NominationDetailResponse(
+        nomination_id=mock_uuid, status="parsed_pending_review",
+        created_at=datetime(2026, 6, 23, tzinfo=timezone.utc), updated_at=datetime(2026, 6, 23, tzinfo=timezone.utc),
+    )
+
+    response = client.patch(
+        f"/api/v1/nominations/{mock_uuid}",
+        json={"assigned_agent_name": "Poprawiony Agent"}
+    )
+
+    assert response.status_code == 200
+    mock_update_fields.assert_called_once()
+    call_args = mock_update_fields.call_args.args
+    assert call_args[2] == {"assigned_agent_name": "Poprawiony Agent"}
+
+
+@patch("app.api.v1.nominations.nomination_view_service.get_nomination_detail")
+@patch("app.api.v1.nominations.nomination_review_service.update_fields")
+def test_update_fields_endpoint_only_sends_provided_fields(mock_update_fields, mock_get_detail, client, mock_uuid):
+    """PATCH z tylko jednym polem nie powinien wysłać do serwisu innych
+    pól jako None - to by je wyczyściło niechcący."""
+    from datetime import datetime, timezone
+    from app.schemas.nomination_detail import NominationDetailResponse
+
+    mock_get_detail.return_value = NominationDetailResponse(
+        nomination_id=mock_uuid, status="parsed_pending_review",
+        created_at=datetime(2026, 6, 23, tzinfo=timezone.utc), updated_at=datetime(2026, 6, 23, tzinfo=timezone.utc),
+    )
+
+    eta_value = "2026-07-01T10:00:00Z"
+    client.patch(f"/api/v1/nominations/{mock_uuid}", json={"eta": eta_value})
+
+    call_args = mock_update_fields.call_args.args
+    sent_fields = call_args[2]
+    assert "eta" in sent_fields
+    assert "etd" not in sent_fields
+    assert "vessel_id" not in sent_fields
+
+
+@patch("app.api.v1.nominations.nomination_review_service.update_fields")
+def test_update_fields_endpoint_404_when_nomination_missing(mock_update_fields, client, mock_uuid):
+    from app.core.exceptions import EntityNotFoundError
+
+    mock_update_fields.side_effect = EntityNotFoundError(entity_name="Nomination", entity_id=mock_uuid)
+
+    response = client.patch(f"/api/v1/nominations/{mock_uuid}", json={"assigned_agent_name": "X"})
+
+    assert response.status_code == 404

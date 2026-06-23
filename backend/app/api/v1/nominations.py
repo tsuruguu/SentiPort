@@ -7,13 +7,15 @@ import uuid
 from app.api import deps
 from app.schemas.nomination import EmailPayload, NominationResponse
 from app.schemas.nomination_detail import NominationListResponse, NominationDetailResponse, \
-    BerthRecommendationListResponse, BerthRecommendationResponse, BerthSummary
+    BerthRecommendationListResponse, BerthRecommendationResponse, BerthSummary, \
+    AssignBerthRequest, ChangeStatusRequest, UpdateNominationFieldsRequest
 from app.models.operations import Nomination
 from app.models.vessel import Vessel
 from app.models.company import Company
 from app.models.reference import Port
 from app.models.enums import NominationStatus
-from app.services import agent_extraction_service, nomination_view_service, berth_assignment_service
+from app.services import agent_extraction_service, nomination_view_service, berth_assignment_service, \
+    nomination_review_service
 from app.repositories import nomination_repository
 
 router = APIRouter()
@@ -116,6 +118,58 @@ def get_recommended_berths(
         ],
         warning=warning,
     )
+
+
+@router.post("/{nomination_id}/assign-berth", response_model=NominationDetailResponse, status_code=status.HTTP_200_OK)
+def assign_berth(
+        nomination_id: uuid.UUID,
+        payload: AssignBerthRequest,
+        db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Zapisuje nabrzeże wybrane przez agenta portowego (typowo jedno z
+    TOP-3 z GET /recommended-berths, ale dopuszczamy dowolne nabrzeże
+    z portu docelowego tej nominacji). berth_id=null czyści przypisanie.
+
+    Walidacja integralności: nabrzeże musi należeć do portu docelowego
+    tej nominacji - inaczej 400.
+    """
+    nomination_review_service.assign_berth(db, nomination_id, payload.berth_id)
+    return nomination_view_service.get_nomination_detail(db, nomination_id)
+
+
+@router.post("/{nomination_id}/status", response_model=NominationDetailResponse, status_code=status.HTTP_200_OK)
+def change_nomination_status(
+        nomination_id: uuid.UUID,
+        payload: ChangeStatusRequest,
+        db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Zmienia status nominacji (np. 'verified' po sprawdzeniu danych przez
+    agenta portowego, 'rejected' jeśli nominacja jest nieprawidłowa).
+
+    Luźna walidacja: jedyne zablokowane przejście to wyjście ZE statusu
+    końcowego (completed/cancelled/rejected) - te są ostateczne. Każde
+    inne przejście, włącznie z "wstecz", jest dozwolone.
+    """
+    nomination_review_service.change_status(db, nomination_id, payload.status)
+    return nomination_view_service.get_nomination_detail(db, nomination_id)
+
+
+@router.patch("/{nomination_id}", response_model=NominationDetailResponse, status_code=status.HTTP_200_OK)
+def update_nomination_fields(
+        nomination_id: uuid.UUID,
+        payload: UpdateNominationFieldsRequest,
+        db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Częściowa edycja nominacji przez agenta portowego - do poprawiania
+    pól, które AI mogło wyciągnąć błędnie z maila (np. zła ETA, źle
+    dopasowany statek/firma). Wysyłaj tylko pola, które chcesz zmienić -
+    pominięte pola pozostają niezmienione.
+    """
+    nomination_review_service.update_fields(db, nomination_id, payload.to_update_dict())
+    return nomination_view_service.get_nomination_detail(db, nomination_id)
 
 
 @router.post("/parse-email", response_model=NominationResponse, status_code=status.HTTP_201_CREATED)

@@ -183,6 +183,42 @@ class NominationListResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Żądania akcji agenta portowego (zapis decyzji po przeglądzie nominacji)
+# ---------------------------------------------------------------------------
+
+class AssignBerthRequest(BaseModel):
+    """berth_id=None czyści przypisanie nabrzeża."""
+    berth_id: Optional[uuid.UUID] = None
+
+
+class ChangeStatusRequest(BaseModel):
+    status: NominationStatus
+
+
+class UpdateNominationFieldsRequest(BaseModel):
+    """
+    Tylko podane pola są aktualizowane (częściowy update). Wszystkie
+    nullable - wysyłaj tylko to, co faktycznie chcesz poprawić.
+    Pola poza tą listą (np. źródłowa treść maila) nie są edytowalne
+    przez ten endpoint.
+    """
+    vessel_id: Optional[uuid.UUID] = None
+    nominating_company_id: Optional[uuid.UUID] = None
+    nominating_contact_id: Optional[uuid.UUID] = None
+    destination_port_id: Optional[uuid.UUID] = None
+    requested_berth_id: Optional[uuid.UUID] = None
+    eta: Optional[datetime] = None
+    etd: Optional[datetime] = None
+    assigned_agent_name: Optional[str] = None
+    mentor_contact_note: Optional[str] = None
+
+    def to_update_dict(self) -> dict:
+        """Zwraca tylko pola, które faktycznie zostały podane (nie None) -
+        żeby PATCH nie czyścił pól, których agent nie chciał zmieniać."""
+        return self.model_dump(exclude_unset=True)
+
+
+# ---------------------------------------------------------------------------
 # Pełny widok szczegółów - jedna nominacja ze wszystkim, czego UI
 # potrzebuje do wyświetlenia karty przeglądu/weryfikacji.
 # ---------------------------------------------------------------------------
