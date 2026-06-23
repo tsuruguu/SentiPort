@@ -23,6 +23,10 @@ def get_company_by_name(db: Session, company_name: str) -> Company | None:
     return db.query(Company).filter(Company.company_name.ilike(f"%{company_name}%")).first()
 
 
+def get_contact_by_id(db: Session, contact_id: uuid.UUID) -> CompanyContact | None:
+    return db.query(CompanyContact).filter(CompanyContact.contact_id == contact_id).first()
+
+
 def get_contact_by_email(db: Session, email: str) -> CompanyContact | None:
     if not email:
         return None

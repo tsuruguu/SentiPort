@@ -79,3 +79,20 @@ class Berth(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class BerthOccupancy(Base):
+    """
+    Harmonogram zajętości nabrzeży - w bazie chronione przez EXCLUDE
+    USING gist constraint (zapobiega nakładającym się rezerwacjom na tym
+    samym nabrzeżu). Używane przy doborze nabrzeża, żeby nie polecić
+    czegoś, co będzie zajęte w oczekiwanym oknie czasowym (ETA-ETD).
+    """
+    __tablename__ = "berth_occupancy"
+    __table_args__ = {"schema": "port_intel"}
+
+    occupancy_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    berth_id = Column(UUID(as_uuid=True), ForeignKey("port_intel.berths.berth_id", ondelete="CASCADE"),
+                      nullable=False)
+    port_call_id = Column(UUID(as_uuid=True))
+    occupied_from = Column(DateTime(timezone=True), nullable=False)
+    occupied_until = Column(DateTime(timezone=True), nullable=False)
