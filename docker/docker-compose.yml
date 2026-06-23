@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: senti_port_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: port_intelligence
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # AUTOMATYCZNE ODPALENIE SQL Z PALCA:
+      # Podpina plik baza.sql i wykonuje go przy *pierwszym* postawieniu kontenera db
+      - ../backend/baza.sql:/docker-entrypoint-initdb.d/baza.sql
+
+  web:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile
+    container_name: senti_port_backend
+    volumes:
+      - ../backend:/workspace
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres_password@db:5432/port_intelligence
+      - OPENAI_API_KEY=your_openai_key_here
+      - ANTHROPIC_API_KEY=your_anthropic_key_here
+      - TIMEZONE=Europe/Warsaw
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
