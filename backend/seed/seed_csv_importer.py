@@ -12,7 +12,6 @@ def import_emails_from_csv(file_path: str):
     df = pd.read_csv(file_path, sep=';')
     db = SessionLocal()
 
-    # Pobieramy ID dla "dummy" danych, żeby przypisać maile do czegoś w bazie
     vessel = db.query(Vessel).first()
     company = db.query(Company).first()
     port = db.query(Port).first()
@@ -21,7 +20,7 @@ def import_emails_from_csv(file_path: str):
         print("Błąd: Brak danych w bazie. Uruchom run_seed.py!")
         return
 
-    print(f"🚀 Importowanie {len(df)} maili do bazy...")
+    print(f"Importowanie {len(df)} maili do bazy...")
 
     for _, row in df.iterrows():
         nomination = Nomination(
@@ -36,7 +35,7 @@ def import_emails_from_csv(file_path: str):
         db.add(nomination)
 
     db.commit()
-    print("✅ Import zakończony!")
+    print("Import zakończony!")
 
 
 if __name__ == "__main__":
