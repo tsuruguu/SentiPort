@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     ELEVENLABS_API_KEY: Optional[str] = None
     ELEVENLABS_AGENT_ID: Optional[str] = None
 
+    # Drugi, OSOBNY agent ElevenLabs (FUN-003/FUN-011) - dostaje pełną
+    # historię statku z bazy i proponuje konfigurację + wskazuje braki/
+    # niespójności do dopytania armatora. Inny agent_id niż ten do
+    # ekstrakcji maila, ale ten sam klucz API.
+    ELEVENLABS_ENRICHMENT_AGENT_ID: Optional[str] = None
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore"

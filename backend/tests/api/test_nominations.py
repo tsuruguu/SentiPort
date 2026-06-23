@@ -349,3 +349,47 @@ def test_update_fields_endpoint_404_when_nomination_missing(mock_update_fields, 
     response = client.patch(f"/api/v1/nominations/{mock_uuid}", json={"assigned_agent_name": "X"})
 
     assert response.status_code == 404
+
+
+@patch("app.api.v1.nominations.vessel_history_enrichment_service.enrich_nomination_with_vessel_history")
+def test_enrich_with_history_endpoint_success(mock_enrich, client, mock_uuid):
+    from app.schemas.vessel_enrichment import VesselEnrichmentResponse, ProposedConfigField, DataInconsistency
+
+    mock_enrich.return_value = VesselEnrichmentResponse(
+        proposed_configuration=[
+            ProposedConfigField(field_name="requested_berth", proposed_value="Nabrzeże Helskie", is_inferred=True)
+        ],
+        inconsistencies_to_clarify=[
+            DataInconsistency(field_name="etd", description="Brak ETD w mailu")
+        ],
+    )
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/enrich-with-history")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["proposed_configuration"][0]["is_inferred"] is True
+    assert data["inconsistencies_to_clarify"][0]["field_name"] == "etd"
+    mock_enrich.assert_called_once()
+
+
+@patch("app.api.v1.nominations.vessel_history_enrichment_service.enrich_nomination_with_vessel_history")
+def test_enrich_with_history_endpoint_404_when_nomination_missing(mock_enrich, client, mock_uuid):
+    from app.core.exceptions import EntityNotFoundError
+
+    mock_enrich.side_effect = EntityNotFoundError(entity_name="Nomination", entity_id=mock_uuid)
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/enrich-with-history")
+
+    assert response.status_code == 404
+
+
+@patch("app.api.v1.nominations.vessel_history_enrichment_service.enrich_nomination_with_vessel_history")
+def test_enrich_with_history_endpoint_422_when_agent_fails(mock_enrich, client, mock_uuid):
+    from app.core.exceptions import LLMParsingError
+
+    mock_enrich.side_effect = LLMParsingError(details="Agent wzbogacenia nie odpowiedział")
+
+    response = client.post(f"/api/v1/nominations/{mock_uuid}/enrich-with-history")
+
+    assert response.status_code == 422

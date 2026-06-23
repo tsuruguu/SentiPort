@@ -61,3 +61,27 @@ class ServiceOrderStatus(str, enum.Enum):
     completed = 'completed'
     cancelled = 'cancelled'
     failed = 'failed'
+
+class CompanyRoleType(str, enum.Enum):
+    registered_owner = 'registered_owner'
+    beneficial_owner = 'beneficial_owner'
+    commercial_operator = 'commercial_operator'
+    technical_manager = 'technical_manager'
+    crewing_agent = 'crewing_agent'
+    ship_chandler = 'ship_chandler'
+    classification_society = 'classification_society'
+    p_and_i_club = 'p_and_i_club'
+    flag_state_authority = 'flag_state_authority'
+
+class SanctionsListSource(str, enum.Enum):
+    ofac_sdn = 'ofac_sdn'
+    eu_consolidated = 'eu_consolidated'
+    uk_hmt = 'uk_hmt'
+    un_security_council = 'un_security_council'
+    other_national = 'other_national'
+
+class SanctionsScreeningResult(str, enum.Enum):
+    clear = 'clear'
+    potential_match = 'potential_match'
+    confirmed_match = 'confirmed_match'
+    false_positive = 'false_positive'

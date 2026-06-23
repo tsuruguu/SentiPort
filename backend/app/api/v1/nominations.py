@@ -15,7 +15,8 @@ from app.models.company import Company
 from app.models.reference import Port
 from app.models.enums import NominationStatus
 from app.services import agent_extraction_service, nomination_view_service, berth_assignment_service, \
-    nomination_review_service
+    nomination_review_service, vessel_history_enrichment_service
+from app.schemas.vessel_enrichment import VesselEnrichmentResponse
 from app.repositories import nomination_repository
 
 router = APIRouter()
@@ -221,10 +222,42 @@ def extract_nomination_data(
 
     Typowy przepływ: POST /mailbox/sync-inbox (import maila) ->
     POST /nominations/{id}/extract (ekstrakcja przez agenta) ->
-    przegląd w UI.
+    POST /nominations/{id}/enrich-with-history (drugi agent dociąga
+    historię statku) -> przegląd w UI.
 
     Błędy biznesowe (nominacja nie istnieje, agent nieosiągalny, agent
     zwrócił niepoprawny JSON) są obsługiwane globalnie przez
     register_exception_handlers - tutaj nie trzeba ich łapać.
     """
     return agent_extraction_service.extract_and_apply(db, nomination_id)
+
+
+@router.post("/{nomination_id}/enrich-with-history", response_model=VesselEnrichmentResponse,
+            status_code=status.HTTP_200_OK)
+def enrich_nomination_with_vessel_history(
+        nomination_id: uuid.UUID,
+        db: Session = Depends(deps.get_db)
+) -> Any:
+    """
+    FUN-003/FUN-011: składa JSON (≤50kB) z PEŁNĄ historią statku
+    przypisanego do tej nominacji - identyfikacja, historia nazw/flag,
+    specy techniczne, role firm, certyfikaty, inspekcje PSC, sankcje,
+    aktualna ocena ryzyka, poprzednie nominacje + ich ładunek - i wysyła
+    do DRUGIEGO, dedykowanego agenta ElevenLabs (inny agent_id niż przy
+    /extract).
+
+    Agent zwraca propozycję konfiguracji statku w porcie oraz listę
+    niespójności/braków danych, o które port powinien dopytać armatora.
+
+    WAŻNE: ten endpoint NICZEGO nie zapisuje do nominacji automatycznie -
+    to jest tylko PROPOZYCJA do wyświetlenia agentowi portowemu (pola
+    uzupełnione/wywnioskowane = is_inferred=True, do pokazania na żółto
+    w UI z możliwością edycji i przyciskiem zatwierdzenia). Zapis
+    następuje przez istniejące PATCH /{id} lub POST /{id}/assign-berth,
+    gdy agent portowy faktycznie zaakceptuje propozycję.
+
+    Wywoływany jako osobny krok PO /extract (nie automatycznie w
+    środku) - jeśli ten agent zawiedzie, ekstrakcja z maila pozostaje
+    nienaruszona.
+    """
+    return vessel_history_enrichment_service.enrich_nomination_with_vessel_history(db, nomination_id)
