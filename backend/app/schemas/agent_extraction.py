@@ -25,9 +25,44 @@ class AgentExtractionRequest(BaseModel):
 # jeśli czegoś nie znalazł w treści maila, zamiast zgadywać.
 # ---------------------------------------------------------------------------
 
+class VesselTechnicalSpecs(BaseModel):
+    """
+    Wymiary/tonaż statku, jeśli armator podał je w mailu (często się
+    zdarza: LOA, draft, DWT, TEU) - kluczowe dla doboru bezpiecznego
+    nabrzeża. Wszystko nullable - agent wypełnia tylko to, co faktycznie
+    znalazł w treści.
+    """
+    length_overall_meters: Optional[float] = None   # LOA
+    beam_meters: Optional[float] = None
+    draft_meters: Optional[float] = None
+    air_draft_meters: Optional[float] = None
+    gross_tonnage: Optional[float] = None
+    net_tonnage: Optional[float] = None
+    deadweight_tonnage: Optional[float] = None       # DWT
+    max_speed_knots: Optional[float] = None
+    has_ice_class: Optional[bool] = None
+    ice_class_designation: Optional[str] = None      # np. 'PC6', '1A Super'
+    container_capacity_teu: Optional[int] = None
+    has_reefer_plugs: Optional[bool] = None
+    reefer_plug_count: Optional[int] = None
+
+
 class ExtractedVessel(BaseModel):
     imo_number: Optional[str] = None
     name: Optional[str] = None
+    technical_specs: Optional[VesselTechnicalSpecs] = None
+
+
+class ExtractedServiceRequest(BaseModel):
+    """
+    Usługa portowa, o którą armator poprosił w mailu (np. "prosimy o
+    holownik", "potrzebujemy zmiany załogi"). service_type musi być
+    jedną z wartości PortServiceType - nieznana wartość jest odrzucana
+    bezpiecznie (patrz _resolve_service_type), nie wywala zapisu.
+    """
+    service_type: str
+    notes: Optional[str] = None
+    scheduled_for: Optional[datetime] = None
 
 
 class ExtractedContact(BaseModel):
@@ -58,6 +93,7 @@ class AgentExtractionResponse(BaseModel):
     nominating_company_name: Optional[str] = None
     nominating_contact: Optional[ExtractedContact] = None
     cargo: Optional[ExtractedCargo] = None
+    requested_services: List[ExtractedServiceRequest] = []
     unstructured_notes: List[str] = []
     confidence_score: Optional[float] = None
     fields_missing: List[str] = []

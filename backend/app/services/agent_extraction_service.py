@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.core.exceptions import LLMParsingError, EntityNotFoundError
-from app.models.operations import Nomination, NominationUnstructuredNote, CargoManifest
-from app.models.enums import NominationStatus, ImdgHazardClass
+from app.models.operations import Nomination, NominationUnstructuredNote, CargoManifest, PortServiceOrder
+from app.models.vessel import VesselTechnicalSpecs
+from app.models.enums import NominationStatus, ImdgHazardClass, PortServiceType
 from app.repositories import vessel_repository, port_repository, company_repository, country_repository
 
 logger = logging.getLogger(__name__)
@@ -72,16 +73,32 @@ def _resolve_imdg_class(raw_value: Optional[str]) -> ImdgHazardClass:
         return ImdgHazardClass.none
 
 
+def _resolve_service_type(raw_value: str) -> Optional[PortServiceType]:
+    """Mapuje string od agenta na enum PortServiceType; nieznana wartość
+    zwraca None (wiersz jest wtedy pomijany), żeby nigdy nie wywalić
+    całego zapisu przez jedną nierozpoznaną usługę."""
+    try:
+        return PortServiceType(raw_value)
+    except ValueError:
+        logger.warning("Agent zwrócił nieznany typ usługi portowej '%s', pomijam.", raw_value)
+        return None
+
+
 def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict) -> Nomination:
     """
     Mapuje wynik agenta na rekordy bazy:
       - vessel_id dociągany po IMO (jeśli agent znalazł IMO i statek już
         istnieje w bazie - to jest właśnie 'dociąganie brakujących danych
         z istniejących rekordów')
+      - wymiary/tonaż statku (LOA, draft, DWT, TEU...) -> nowy wiersz w
+        vessel_technical_specs (wersjonowane, data_source='email_nomination')
       - destination_port_id po UN/LOCODE
       - nominating_company_id po nazwie firmy (fuzzy match)
       - requested_berth_id po nazwie nabrzeża (jeśli armator o nie poprosił)
       - cargo -> nowy wiersz w cargo_manifests
+      - usługi portowe (holownik, pilotaż, zmiana załogi...) -> nowe
+        wiersze w port_service_orders, powiązane z nomination_id (bo
+        port_call jeszcze nie istnieje na tym etapie)
       - notatki nieustrukturyzowane -> nomination_unstructured_notes,
         oznaczone requires_human_review=True (zawsze wymagają przeglądu
         człowieka, bo to dane "nie zmieściły się" w sztywne kolumny)
@@ -92,6 +109,7 @@ def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict
     vessel = extracted.get("vessel") or {}
     cargo = extracted.get("cargo") or {}
     contact = extracted.get("nominating_contact") or {}
+    technical_specs = vessel.get("technical_specs") or {}
 
     # --- Statek: dociągamy po IMO, jeśli agent go znalazł ---
     if vessel.get("imo_number"):
@@ -173,6 +191,43 @@ def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict
             destination_country_id=destination_country.country_id if destination_country else None,
         )
         db.add(cargo_manifest)
+
+    # --- Wymiary/tonaż statku (LOA, draft, DWT, TEU...) - zapisujemy
+    # tylko jeśli agent znalazł CHOĆ JEDNĄ wartość i mamy już znany
+    # vessel_id (kolumna NOT NULL w bazie, więc bez statku nie ma gdzie
+    # tego podczepić - trafi wtedy do unstructured_notes niżej) ---
+    if nomination.vessel_id and any(v is not None for v in technical_specs.values()):
+        db.add(VesselTechnicalSpecs(
+            vessel_id=nomination.vessel_id,
+            length_overall_meters=technical_specs.get("length_overall_meters"),
+            beam_meters=technical_specs.get("beam_meters"),
+            draft_meters=technical_specs.get("draft_meters"),
+            air_draft_meters=technical_specs.get("air_draft_meters"),
+            gross_tonnage=technical_specs.get("gross_tonnage"),
+            net_tonnage=technical_specs.get("net_tonnage"),
+            deadweight_tonnage=technical_specs.get("deadweight_tonnage"),
+            max_speed_knots=technical_specs.get("max_speed_knots"),
+            has_ice_class=bool(technical_specs.get("has_ice_class")),
+            ice_class_designation=technical_specs.get("ice_class_designation"),
+            container_capacity_teu=technical_specs.get("container_capacity_teu"),
+            has_reefer_plugs=bool(technical_specs.get("has_reefer_plugs")),
+            reefer_plug_count=technical_specs.get("reefer_plug_count"),
+            data_source="email_nomination",
+        ))
+
+    # --- Usługi portowe, o które armator poprosił w mailu (holownik,
+    # pilotaż, zmiana załogi...) - powiązane z nomination_id, bo
+    # port_call jeszcze nie istnieje na tym etapie ---
+    for service_request in extracted.get("requested_services", []):
+        resolved_type = _resolve_service_type(service_request.get("service_type"))
+        if resolved_type is None:
+            continue
+        db.add(PortServiceOrder(
+            nomination_id=nomination.nomination_id,
+            service_type=resolved_type,
+            notes=service_request.get("notes"),
+            scheduled_for=service_request.get("scheduled_for"),
+        ))
 
     # --- Notatki nieustrukturyzowane - zawsze wymagają przeglądu człowieka ---
     for note_text in extracted.get("unstructured_notes", []):

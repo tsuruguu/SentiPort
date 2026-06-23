@@ -155,6 +155,105 @@ def test_apply_extraction_result_unknown_imdg_class_falls_back_to_none():
     assert resolved == ImdgHazardClass.none
 
 
+def test_apply_extraction_result_saves_technical_specs_when_vessel_known():
+    """Jeśli armator podał wymiary statku w mailu (LOA, draft, DWT, TEU)
+    i mamy już znany vessel_id, zapisujemy nowy wiersz w
+    vessel_technical_specs (potrzebne do doboru nabrzeża w Kroku 3)."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()  # ma już vessel_id ustawiony
+
+    extracted = {
+        "vessel": {
+            "technical_specs": {
+                "length_overall_meters": 199.9,
+                "draft_meters": 12.5,
+                "deadweight_tonnage": 45000,
+                "container_capacity_teu": 3500,
+            }
+        },
+        "cargo": {},
+        "unstructured_notes": [],
+    }
+
+    agent_extraction_service.apply_extraction_result(mock_db, nomination, extracted)
+
+    # db.add: nomination + vessel_technical_specs = 2
+    assert mock_db.add.call_count == 2
+    added_objects = [call.args[0] for call in mock_db.add.call_args_list]
+    specs = [obj for obj in added_objects if obj.__class__.__name__ == "VesselTechnicalSpecs"]
+    assert len(specs) == 1
+    assert specs[0].length_overall_meters == 199.9
+    assert specs[0].deadweight_tonnage == 45000
+    assert specs[0].data_source == "email_nomination"
+
+
+def test_apply_extraction_result_skips_technical_specs_when_vessel_unknown():
+    """Bez znanego vessel_id (FK NOT NULL w bazie) nie zapisujemy
+    technical_specs - to by wywaliło insert."""
+    mock_db = MagicMock()
+    nomination = _make_nomination(vessel_id=None)
+
+    extracted = {
+        "vessel": {"technical_specs": {"length_overall_meters": 199.9}},
+        "cargo": {},
+        "unstructured_notes": [],
+    }
+
+    agent_extraction_service.apply_extraction_result(mock_db, nomination, extracted)
+
+    added_objects = [call.args[0] for call in mock_db.add.call_args_list]
+    specs = [obj for obj in added_objects if obj.__class__.__name__ == "VesselTechnicalSpecs"]
+    assert len(specs) == 0
+
+
+def test_apply_extraction_result_saves_requested_port_services():
+    """Jeśli armator poprosił o usługi portowe w mailu (holownik,
+    pilotaż...), zapisujemy je jako port_service_orders powiązane z
+    nomination_id (port_call jeszcze nie istnieje na tym etapie)."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()
+
+    extracted = {
+        "vessel": {},
+        "cargo": {},
+        "requested_services": [
+            {"service_type": "towage", "notes": "2 holowniki przy wejściu"},
+            {"service_type": "crew_change", "notes": "Zmiana 4 marynarzy"},
+        ],
+        "unstructured_notes": [],
+    }
+
+    agent_extraction_service.apply_extraction_result(mock_db, nomination, extracted)
+
+    added_objects = [call.args[0] for call in mock_db.add.call_args_list]
+    service_orders = [obj for obj in added_objects if obj.__class__.__name__ == "PortServiceOrder"]
+    assert len(service_orders) == 2
+    assert {so.notes for so in service_orders} == {"2 holowniki przy wejściu", "Zmiana 4 marynarzy"}
+    assert all(so.nomination_id == nomination.nomination_id for so in service_orders)
+
+
+def test_apply_extraction_result_skips_unknown_service_type():
+    """Nieznany typ usługi (np. literówka od agenta) nie wywala zapisu -
+    wiersz jest po prostu pomijany."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()
+
+    extracted = {
+        "vessel": {},
+        "cargo": {},
+        "requested_services": [
+            {"service_type": "nieznana_usluga_xyz", "notes": "coś dziwnego"},
+        ],
+        "unstructured_notes": [],
+    }
+
+    agent_extraction_service.apply_extraction_result(mock_db, nomination, extracted)
+
+    added_objects = [call.args[0] for call in mock_db.add.call_args_list]
+    service_orders = [obj for obj in added_objects if obj.__class__.__name__ == "PortServiceOrder"]
+    assert len(service_orders) == 0
+
+
 @patch("app.services.agent_extraction_service.call_extraction_agent")
 def test_extract_and_apply_raises_when_nomination_missing(mock_call_agent):
     mock_db = MagicMock()

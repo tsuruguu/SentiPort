@@ -906,10 +906,20 @@ COMMENT ON TABLE cargo_manifests IS 'Ładunek statku - deklarowany przy nominacj
 
 -- ----------------------------------------------------------------------------
 -- port_service_orders: zamówienia usług portowych (holowniki, prąd, lekarz, barber)
+--
+-- UWAGA: zamówienie usługi może powstać już na etapie maila nominacyjnego
+-- (np. "prosimy o holownik"), ZANIM istnieje port_call (ten powstaje
+-- dopiero po weryfikacji nominacji). Dlatego port_call_id jest nullable,
+-- a nomination_id służy jako tymczasowe powiązanie - gdy nominacja
+-- zostanie zweryfikowana i powstanie port_call, zamówienie jest
+-- "podczepiane" pod realny port_call_id (patrz CHECK poniżej:
+-- przynajmniej jedno z dwóch musi być wypełnione, identyczny wzorzec
+-- jak w cargo_manifests/chk_cargo_parent).
 -- ----------------------------------------------------------------------------
 CREATE TABLE port_service_orders (
                                      service_order_id        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                                     port_call_id                UUID NOT NULL REFERENCES port_calls(port_call_id) ON DELETE CASCADE,
+                                     port_call_id                UUID REFERENCES port_calls(port_call_id) ON DELETE CASCADE,
+                                     nomination_id                  UUID REFERENCES nominations(nomination_id) ON DELETE CASCADE,
                                      service_type                   port_service_type NOT NULL,
                                      provider_company_id               UUID REFERENCES companies(company_id),  -- np. firma holownicza, dostawca prowiantu
                                      status                               service_order_status NOT NULL DEFAULT 'requested',
@@ -920,12 +930,14 @@ CREATE TABLE port_service_orders (
                                      cost_currency                                       CHAR(3) REFERENCES currencies(currency_code),
                                      notes                                                  TEXT,
                                      created_at                                                TIMESTAMPTZ NOT NULL DEFAULT now(),
-                                     updated_at                                                   TIMESTAMPTZ NOT NULL DEFAULT now()
+                                     updated_at                                                   TIMESTAMPTZ NOT NULL DEFAULT now(),
+                                     CONSTRAINT chk_service_order_parent CHECK (port_call_id IS NOT NULL OR nomination_id IS NOT NULL)
 );
 CREATE INDEX idx_service_orders_port_call ON port_service_orders(port_call_id);
+CREATE INDEX idx_service_orders_nomination ON port_service_orders(nomination_id);
 CREATE INDEX idx_service_orders_type ON port_service_orders(service_type);
 CREATE INDEX idx_service_orders_status ON port_service_orders(status);
-COMMENT ON TABLE port_service_orders IS 'Zamówienia usług portowych per wizyta: pilotaż, holowniki, prąd z lądu, lekarz, barber, bunkrowanie, itd.';
+COMMENT ON TABLE port_service_orders IS 'Zamówienia usług portowych: pilotaż, holowniki, prąd z lądu, lekarz, barber, bunkrowanie, itd. Może być powiązane z konkretną wizytą (port_call_id) lub - jeśli zamówione już w mailu nominacyjnym, zanim wizyta istnieje - tymczasowo z nomination_id.';
 
 -- ----------------------------------------------------------------------------
 -- generated_documents: śledzenie dokumentów PDF generowanych dla kapitanatu

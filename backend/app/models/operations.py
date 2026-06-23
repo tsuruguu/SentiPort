@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.sql import func
 from app.models.base import Base
-from app.models.enums import NominationStatus, ImdgHazardClass
+from app.models.enums import NominationStatus, ImdgHazardClass, PortServiceType, ServiceOrderStatus
 
 
 class Nomination(Base):
@@ -80,3 +80,38 @@ class CargoManifest(Base):
     destination_country_id = Column(SmallInteger)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class PortServiceOrder(Base):
+    """
+    Zamówienie usługi portowej (pilotaż, holowniki, prąd z lądu, lekarz,
+    barber, bunkrowanie, zmiana załogi, itd.).
+
+    Armator często prosi o te usługi już w mailu nominacyjnym, ZANIM
+    istnieje port_call (ten powstaje dopiero po weryfikacji nominacji).
+    Dlatego zamówienie może być powiązane albo z konkretną wizytą
+    (port_call_id), albo - tymczasowo - z samą nominacją (nomination_id).
+    Przynajmniej jedno z dwóch musi być wypełnione (chk_service_order_parent
+    w bazie).
+    """
+    __tablename__ = "port_service_orders"
+    __table_args__ = {"schema": "port_intel"}
+
+    service_order_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    port_call_id = Column(UUID(as_uuid=True))
+    nomination_id = Column(UUID(as_uuid=True), ForeignKey("port_intel.nominations.nomination_id", ondelete="CASCADE"))
+    service_type = Column(SQLEnum(PortServiceType, name="port_service_type", schema="port_intel", create_type=False),
+                          nullable=False)
+    provider_company_id = Column(UUID(as_uuid=True), ForeignKey("port_intel.companies.company_id"))
+    status = Column(SQLEnum(ServiceOrderStatus, name="service_order_status", schema="port_intel", create_type=False),
+                    default=ServiceOrderStatus.requested)
+
+    requested_at = Column(DateTime(timezone=True), server_default=func.now())
+    scheduled_for = Column(DateTime(timezone=True))
+    completed_at = Column(DateTime(timezone=True))
+    cost_amount = Column(Numeric(12, 2))
+    cost_currency = Column(String(3))
+    notes = Column(Text)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now())
