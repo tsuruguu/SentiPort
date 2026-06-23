@@ -14,3 +14,13 @@ def get_port_by_name_or_locode(db: Session, search_term: str) -> Port | None:
 
 def get_berths_by_port(db: Session, port_id: uuid.UUID) -> list[Berth]:
     return db.query(Berth).filter(Berth.port_id == port_id).all()
+
+def get_berth_by_name(db: Session, port_id: uuid.UUID, berth_name: str) -> Berth | None:
+    """Szuka konkretnego nabrzeża w danym porcie po nazwie (np. z prośby
+    armatora w mailu: 'Nabrzeże Helskie')."""
+    if not berth_name:
+        return None
+    return db.query(Berth).filter(
+        Berth.port_id == port_id,
+        (Berth.berth_name.ilike(f"%{berth_name}%")) | (Berth.berth_code.ilike(f"%{berth_name}%"))
+    ).first()

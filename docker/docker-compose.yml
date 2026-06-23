@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgis/postgis:16-3.4
@@ -33,5 +31,28 @@ services:
     depends_on:
       - db
 
+  mailserver:
+    image: mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: sentiport.pl
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+    environment:
+      - DMS_DEBUG=0
+      - PERMIT_DOCKER=connected-networks
+      - SSL_TYPE=self-signed
+      - SPOOF_PROTECTION=0
+      - ENABLE_POSTFIX_ACCOUNT_MAPPING=1
+      - HOSTNAME=mail
+      - DOMAINNAME=sentiport.pl
+    volumes:
+      - mail_data:/var/mail
+      - ../docker/config:/tmp/docker-mailserver
+
 volumes:
   postgres_data:
+  mail_data:
+  mail_config:

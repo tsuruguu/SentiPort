@@ -1,9 +1,16 @@
+import os
+from dotenv import load_dotenv
+
+# Wczytujemy .env z folderu 'backend' przed jakimkolwiek importem 'app'
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env"))
+
+# Dopiero teraz importujemy aplikację
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 import uuid
 
-from app.main import app
+from app.main import app  # To teraz zadziała, bo Settings() znajdzie zmienne
 from app.api.deps import get_db
 
 @pytest.fixture

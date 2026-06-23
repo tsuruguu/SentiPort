@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Any
+import uuid
 
 from app.api import deps
 from app.schemas.nomination import EmailPayload, NominationResponse
@@ -8,6 +9,7 @@ from app.models.operations import Nomination
 from app.models.vessel import Vessel
 from app.models.company import Company
 from app.models.reference import Port
+from app.services import agent_extraction_service
 
 router = APIRouter()
 
@@ -45,3 +47,25 @@ def parse_nomination_email(
     db.refresh(new_nomination)
 
     return new_nomination
+
+
+@router.post("/{nomination_id}/extract", response_model=NominationResponse, status_code=status.HTTP_200_OK)
+def extract_nomination_data(
+        nomination_id: uuid.UUID,
+        db: Session = Depends(deps.get_db)
+) -> Any:
+    """
+    Wysyła treść maila istniejącej nominacji do agenta ekstrakcji
+    (wrapper kolegi na ElevenLabs), a zwrócone dane (statek, port,
+    ładunek, firma, kontakt) dociąga do istniejących rekordów w bazie
+    i zapisuje wynik w nominacji.
+
+    Typowy przepływ: POST /mailbox/sync-inbox (import maila) ->
+    POST /nominations/{id}/extract (ekstrakcja przez agenta) ->
+    przegląd w UI.
+
+    Błędy biznesowe (nominacja nie istnieje, agent nieosiągalny, agent
+    zwrócił niepoprawny JSON) są obsługiwane globalnie przez
+    register_exception_handlers - tutaj nie trzeba ich łapać.
+    """
+    return agent_extraction_service.extract_and_apply(db, nomination_id)

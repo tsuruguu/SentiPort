@@ -3,8 +3,19 @@ from openai import OpenAI
 from app.config import settings
 from app.core.exceptions import LLMParsingError
 
-# Inicjalizacja klienta OpenAI
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+# Klient inicjalizowany leniwie (przy pierwszym użyciu), nie przy imporcie
+# modułu. Projekt nie korzysta już z OpenAI na stałe (głosowy agent jest
+# realizowany przez ElevenLabs) - więc ten serwis to teraz tylko opcjonalny
+# fallback/funkcja pomocnicza, a brak OPENAI_API_KEY nie powinien wywalać
+# importu całej aplikacji.
+_client: OpenAI | None = None
+
+
+def _get_client() -> OpenAI:
+    global _client
+    if _client is None:
+        _client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    return _client
 
 
 def parse_nomination_email_with_llm(subject: str, body: str) -> dict:
@@ -42,7 +53,7 @@ def parse_nomination_email_with_llm(subject: str, body: str) -> dict:
     user_prompt = f"Temat: {subject}\n\nTreść maila:\n{body}"
 
     try:
-        response = client.chat.completions.create(
+        response = _get_client().chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": system_prompt},

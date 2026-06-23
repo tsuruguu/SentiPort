@@ -25,3 +25,12 @@ class ImdgHazardClass(str, enum.Enum):
     class_7_radioactive = 'class_7_radioactive'
     class_8_corrosive = 'class_8_corrosive'
     class_9_miscellaneous = 'class_9_miscellaneous'
+
+class VesselDomain(str, enum.Enum):
+    commercial = 'commercial'
+    military = 'military'
+    government = 'government'
+    civilian_private = 'civilian_private'
+    research_scientific = 'research_scientific'
+    fishing = 'fishing'
+    unknown = 'unknown'
