@@ -10,11 +10,13 @@ class Settings(BaseSettings):
     # realizowany jest przez ElevenLabs w innym module).
     OPENAI_API_KEY: Optional[str] = None
 
-    # Agent ekstrakcji danych z maili (wrapper kolegi na ElevenLabs).
-    # AGENT_API_URL = pełny endpoint, na który wysyłamy {nomination_id, email}.
-    # AGENT_API_KEY = opcjonalny token, jeśli agent wymaga autoryzacji.
-    AGENT_API_URL: Optional[str] = None
-    AGENT_API_KEY: Optional[str] = None
+    # Agent ekstrakcji danych z maili - prawdziwa konwersacja ElevenLabs
+    # (Chat Mode, bez audio), nie zwykły REST endpoint.
+    # ELEVENLABS_API_KEY: klucz API z konta kolegi (xi-api-key).
+    # ELEVENLABS_AGENT_ID: ID konkretnego agenta skonfigurowanego do
+    # parsowania maili nominacyjnych (agent_...).
+    ELEVENLABS_API_KEY: Optional[str] = None
+    ELEVENLABS_AGENT_ID: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_file=".env",

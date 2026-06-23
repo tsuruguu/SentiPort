@@ -1,8 +1,11 @@
+import json
 import logging
+import threading
 from typing import Optional
 import uuid
 
-import httpx
+from elevenlabs.client import ElevenLabs
+from elevenlabs.conversational_ai.conversation import Conversation, ConversationInitiationData
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -13,6 +16,10 @@ from app.models.enums import NominationStatus, ImdgHazardClass, PortServiceType
 from app.repositories import vessel_repository, port_repository, company_repository, country_repository
 
 logger = logging.getLogger(__name__)
+
+# Ile maksymalnie czekamy na odpowiedź agenta w jednej "rozmowie" o mailu
+# nominacyjnym. Agenci konwersacyjni bywają wolniejsi niż zwykłe API.
+AGENT_RESPONSE_TIMEOUT_SECONDS = 60.0
 
 
 def _build_agent_payload(nomination: Nomination) -> dict:
@@ -34,31 +41,77 @@ def _build_agent_payload(nomination: Nomination) -> dict:
 
 def call_extraction_agent(payload: dict) -> dict:
     """
-    Wywołuje API agenta (wrapper kolegi na ElevenLabs) synchronicznie.
-    Zwraca surowy JSON - walidacja/parsowanie do AgentExtractionResponse
-    dzieje się wyżej, żeby błędy walidacji były jednoznacznie odróżnialne
-    od błędów samego połączenia.
-    """
-    if not settings.AGENT_API_URL:
-        raise LLMParsingError(details="Brak skonfigurowanego AGENT_API_URL - agent kolegi nie jest podłączony.")
+    Wywołuje agenta ElevenLabs (Chat Mode - czysty tekst, bez audio) i
+    czeka na jego odpowiedź synchronicznie.
 
-    headers = {"Content-Type": "application/json"}
-    if settings.AGENT_API_KEY:
-        headers["Authorization"] = f"Bearer {settings.AGENT_API_KEY}"
+    Mechanika: ElevenLabs SDK jest zaprojektowany wokół żywej sesji
+    konwersacyjnej z odpowiedziami dostarczanymi przez callback
+    (`callback_agent_response`), nie jako zwrotka z funkcji. Żeby
+    wpasować to w nasz model "wyślij request, dostań response",
+    otwieramy sesję, wysyłamy treść maila jako jedną wiadomość tekstową,
+    i blokujemy się na threading.Event, aż callback dostarczy pierwszą
+    odpowiedź agenta - lub aż upłynie timeout.
+
+    Agent (zgodnie z jego systemowym promptem) ma odpowiedzieć czystym
+    JSON-em zgodnym z naszym kontraktem (AgentExtractionResponse) - tutaj
+    tylko parsujemy ten tekst jako JSON.
+    """
+    if not settings.ELEVENLABS_API_KEY or not settings.ELEVENLABS_AGENT_ID:
+        raise LLMParsingError(
+            details="Brak ELEVENLABS_API_KEY lub ELEVENLABS_AGENT_ID - agent kolegi nie jest skonfigurowany."
+        )
+
+    client = ElevenLabs(api_key=settings.ELEVENLABS_API_KEY)
+
+    response_received = threading.Event()
+    result: dict = {"text": None, "error": None}
+
+    def on_agent_response(response: str) -> None:
+        # Pierwsza odpowiedź agenta to nasz wynik - zwalniamy blokadę.
+        result["text"] = response
+        response_received.set()
+
+    def on_agent_correction(original: str, corrected: str) -> None:
+        # Agent czasem poprawia własną wypowiedź - bierzemy finalną wersję,
+        # jeśli zdąży przyjść przed timeoutem.
+        result["text"] = corrected
+
+    conversation_override = {"conversation": {"text_only": True}}
+    config = ConversationInitiationData(
+        conversation_config_override=conversation_override,
+        dynamic_variables={"nomination_id": payload["nomination_id"]},
+    )
+
+    conversation = Conversation(
+        client,
+        settings.ELEVENLABS_AGENT_ID,
+        requires_auth=True,
+        config=config,
+        callback_agent_response=on_agent_response,
+        callback_agent_response_correction=on_agent_correction,
+    )
 
     try:
-        response = httpx.post(
-            settings.AGENT_API_URL,
-            json=payload,
-            headers=headers,
-            timeout=60.0,  # agenci głosowi/LLM-owi mogą odpowiadać wolniej niż zwykłe API
-        )
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as exc:
-        raise LLMParsingError(details=f"Błąd komunikacji z agentem ekstrakcji: {exc}")
-    except ValueError as exc:  # response.json() zwrócił coś, co nie jest JSON-em
-        raise LLMParsingError(details=f"Agent zwrócił niepoprawny JSON: {exc}")
+        conversation.start_session()
+        # Treść maila jako jedna wiadomość tekstowa - agent ma system
+        # prompt nauczony zwracać czysty JSON zgodny z naszym kontraktem.
+        email_message = json.dumps(payload["email"], ensure_ascii=False)
+        conversation.send_user_message(email_message)
+
+        if not response_received.wait(timeout=AGENT_RESPONSE_TIMEOUT_SECONDS):
+            raise LLMParsingError(
+                details=f"Agent nie odpowiedział w ciągu {AGENT_RESPONSE_TIMEOUT_SECONDS}s."
+            )
+    finally:
+        conversation.end_session()
+
+    if not result["text"]:
+        raise LLMParsingError(details="Agent zwrócił pustą odpowiedź.")
+
+    try:
+        return json.loads(result["text"])
+    except ValueError as exc:
+        raise LLMParsingError(details=f"Agent zwrócił niepoprawny JSON: {exc}. Treść: {result['text'][:500]}")
 
 
 def _resolve_imdg_class(raw_value: Optional[str]) -> ImdgHazardClass:
@@ -95,7 +148,9 @@ def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict
       - destination_port_id po UN/LOCODE
       - nominating_company_id po nazwie firmy (fuzzy match)
       - requested_berth_id po nazwie nabrzeża (jeśli armator o nie poprosił)
-      - cargo -> nowy wiersz w cargo_manifests
+      - cargo_items -> WIELE wierszy w cargo_manifests (statek może
+        wieźć kilka różnych ładunków na raz, np. część suchych
+        kontenerów + część reefer + część niebezpiecznych)
       - usługi portowe (holownik, pilotaż, zmiana załogi...) -> nowe
         wiersze w port_service_orders, powiązane z nomination_id (bo
         port_call jeszcze nie istnieje na tym etapie)
@@ -107,7 +162,7 @@ def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict
     (None), istniejąca wartość w nominacji NIE jest czyszczona.
     """
     vessel = extracted.get("vessel") or {}
-    cargo = extracted.get("cargo") or {}
+    cargo_items = extracted.get("cargo_items") or []
     contact = extracted.get("nominating_contact") or {}
     technical_specs = vessel.get("technical_specs") or {}
 
@@ -172,8 +227,12 @@ def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict
 
     db.add(nomination)
 
-    # --- Ładunek: jeśli agent znalazł cokolwiek o ładunku, zapisujemy nowy wiersz ---
-    if cargo.get("description"):
+    # --- Ładunek: statek może wieźć kilka różnych ładunków na raz, więc
+    # zapisujemy WSZYSTKIE elementy z listy jako osobne wiersze ---
+    for cargo in cargo_items:
+        if not cargo.get("description"):
+            continue  # description jest NOT NULL w bazie - bez niego pomijamy element
+
         origin_country = country_repository.get_country_by_iso_alpha2(db, cargo.get("origin_country"))
         destination_country = country_repository.get_country_by_iso_alpha2(db, cargo.get("destination_country"))
 

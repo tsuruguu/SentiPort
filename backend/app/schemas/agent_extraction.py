@@ -71,8 +71,19 @@ class ExtractedContact(BaseModel):
     email: Optional[str] = None
 
 
-class ExtractedCargo(BaseModel):
-    description: Optional[str] = None
+class ExtractedCargoItem(BaseModel):
+    """
+    Jeden rodzaj ładunku na statku. Statek może wieźć wiele różnych
+    ładunków jednocześnie (np. część kontenerów suchych + część reefer +
+    część niebezpiecznych) - dlatego AgentExtractionResponse.cargo_items
+    to LISTA, a nie pojedynczy obiekt. Każdy element odpowiada jednemu
+    wierszowi w cargo_manifests.
+
+    description jest wymagane (cargo_description jest NOT NULL w bazie) -
+    jeśli agent nie potrafi opisać ładunku, lepiej nie dodawać go do
+    listy niż wysłać element bez opisu.
+    """
+    description: str
     quantity: Optional[float] = None
     unit: Optional[str] = None
     imdg_hazard_class: Optional[str] = None  # musi być jedną z wartości ImdgHazardClass
@@ -92,7 +103,7 @@ class AgentExtractionResponse(BaseModel):
     requested_berth_name: Optional[str] = None
     nominating_company_name: Optional[str] = None
     nominating_contact: Optional[ExtractedContact] = None
-    cargo: Optional[ExtractedCargo] = None
+    cargo_items: List[ExtractedCargoItem] = []
     requested_services: List[ExtractedServiceRequest] = []
     unstructured_notes: List[str] = []
     confidence_score: Optional[float] = None

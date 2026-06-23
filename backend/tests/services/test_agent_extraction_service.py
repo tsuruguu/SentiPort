@@ -35,30 +35,90 @@ def test_build_agent_payload_contains_only_real_email_fields():
     assert payload["email"]["received_at"] == "2026-06-23T17:30:00+00:00"
 
 
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
 @patch("app.services.agent_extraction_service.settings")
-@patch("app.services.agent_extraction_service.httpx.post")
-def test_call_extraction_agent_success(mock_post, mock_settings):
-    mock_settings.AGENT_API_URL = "https://agent.example.com/extract"
-    mock_settings.AGENT_API_KEY = "secret-token"
+def test_call_extraction_agent_success(mock_settings, mock_elevenlabs_cls, mock_conversation_cls):
+    """Symulujemy, że agent (przez callback_agent_response) odpowiada
+    czystym JSON-em - powinniśmy go sparsować i zwrócić jako dict."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
 
-    mock_response = MagicMock()
-    mock_response.json.return_value = {"vessel": {"imo_number": "9456789"}}
-    mock_response.raise_for_status.return_value = None
-    mock_post.return_value = mock_response
+    mock_conversation = MagicMock()
+    mock_conversation_cls.return_value = mock_conversation
 
-    result = agent_extraction_service.call_extraction_agent({"nomination_id": "abc"})
+    def fake_start_session():
+        # Symulujemy, że agent odpowiada natychmiast po starcie sesji,
+        # zanim send_user_message zdąży się wykonać w "realnym" wątku -
+        # wywołujemy callback ręcznie, tak jak zrobiłby to SDK w tle.
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback('{"vessel": {"imo_number": "9456789"}, "cargo": null}')
 
-    assert result == {"vessel": {"imo_number": "9456789"}}
-    called_kwargs = mock_post.call_args.kwargs
-    assert called_kwargs["headers"]["Authorization"] == "Bearer secret-token"
+    mock_conversation.start_session.side_effect = fake_start_session
+
+    result = agent_extraction_service.call_extraction_agent({
+        "nomination_id": "abc",
+        "email": {"subject": "test", "body": "test"},
+    })
+
+    assert result == {"vessel": {"imo_number": "9456789"}, "cargo": None}
+    mock_conversation.send_user_message.assert_called_once()
+    mock_conversation.end_session.assert_called_once()
 
 
 @patch("app.services.agent_extraction_service.settings")
-def test_call_extraction_agent_missing_url_raises(mock_settings):
-    mock_settings.AGENT_API_URL = None
+def test_call_extraction_agent_missing_credentials_raises(mock_settings):
+    mock_settings.ELEVENLABS_API_KEY = None
+    mock_settings.ELEVENLABS_AGENT_ID = None
 
     with pytest.raises(LLMParsingError):
-        agent_extraction_service.call_extraction_agent({"nomination_id": "abc"})
+        agent_extraction_service.call_extraction_agent({
+            "nomination_id": "abc",
+            "email": {"subject": "test", "body": "test"},
+        })
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_timeout_raises(mock_settings, mock_elevenlabs_cls, mock_conversation_cls):
+    """Jeśli agent nie odpowie w ogóle (callback nigdy nie woła set()),
+    nie wisimy w nieskończoność - wybuchamy LLMParsingError po timeoucie."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+    mock_conversation_cls.return_value = MagicMock()  # start_session nic nie robi - brak odpowiedzi
+
+    with patch("app.services.agent_extraction_service.AGENT_RESPONSE_TIMEOUT_SECONDS", 0.05):
+        with pytest.raises(LLMParsingError):
+            agent_extraction_service.call_extraction_agent({
+                "nomination_id": "abc",
+                "email": {"subject": "test", "body": "test"},
+            })
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_invalid_json_raises(mock_settings, mock_elevenlabs_cls, mock_conversation_cls):
+    """Jeśli agent odpowie tekstem, który nie jest poprawnym JSON-em
+    (np. zwykłą rozmową), zgłaszamy jasny błąd zamiast cichego crasha."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_conversation = MagicMock()
+    mock_conversation_cls.return_value = mock_conversation
+
+    def fake_start_session():
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback("Przepraszam, nie rozumiem tej wiadomości.")
+
+    mock_conversation.start_session.side_effect = fake_start_session
+
+    with pytest.raises(LLMParsingError):
+        agent_extraction_service.call_extraction_agent({
+            "nomination_id": "abc",
+            "email": {"subject": "test", "body": "test"},
+        })
 
 
 @patch("app.repositories.vessel_repository.get_vessel_by_imo")
@@ -87,7 +147,7 @@ def test_apply_extraction_result_resolves_existing_records_by_lookup(
         "confidence_score": 0.91,
         "extraction_model": "elevenlabs-agent-v1",
         "fields_missing": ["etd"],
-        "cargo": None,
+        "cargo_items": [],
         "unstructured_notes": [],
     }
 
@@ -114,7 +174,7 @@ def test_apply_extraction_result_does_not_clear_existing_value_when_agent_return
         "vessel": {"imo_number": None},
         "port_locode": None,
         "nominating_company_name": None,
-        "cargo": None,
+        "cargo_items": [],
         "unstructured_notes": [],
     }
 
@@ -124,20 +184,22 @@ def test_apply_extraction_result_does_not_clear_existing_value_when_agent_return
     mock_get_vessel.assert_not_called()
 
 
-def test_apply_extraction_result_saves_cargo_manifest_when_present():
+def test_apply_extraction_result_saves_single_cargo_manifest():
     mock_db = MagicMock()
     nomination = _make_nomination()
 
     extracted = {
         "vessel": {},
-        "cargo": {
-            "description": "Kontenery mieszane, w tym reefer",
-            "quantity": 120,
-            "unit": "TEU",
-            "imdg_hazard_class": "none",
-            "requires_refrigeration": True,
-            "is_perishable": True,
-        },
+        "cargo_items": [
+            {
+                "description": "Kontenery mieszane, w tym reefer",
+                "quantity": 120,
+                "unit": "TEU",
+                "imdg_hazard_class": "none",
+                "requires_refrigeration": True,
+                "is_perishable": True,
+            },
+        ],
         "unstructured_notes": ["Armator prosi o priorytetowe cumowanie"],
     }
 
@@ -145,6 +207,88 @@ def test_apply_extraction_result_saves_cargo_manifest_when_present():
 
     # db.add powinien zostać wywołany dla: nomination + cargo_manifest + 1 notatka
     assert mock_db.add.call_count == 3
+
+
+def test_apply_extraction_result_saves_multiple_cargo_manifests():
+    """Statek może wieźć kilka różnych ładunków na raz (np. część
+    kontenerów suchych + część reefer + część niebezpiecznych) - każdy
+    element listy cargo_items powinien zapisać się jako osobny wiersz
+    w cargo_manifests."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()
+
+    extracted = {
+        "vessel": {},
+        "cargo_items": [
+            {
+                "description": "Kontenery suche, towary ogólne",
+                "quantity": 80,
+                "unit": "TEU",
+                "imdg_hazard_class": "none",
+            },
+            {
+                "description": "Kontenery reefer, owoce mrożone",
+                "quantity": 30,
+                "unit": "TEU",
+                "imdg_hazard_class": "none",
+                "requires_refrigeration": True,
+                "target_temperature_celsius": -18,
+                "is_perishable": True,
+            },
+            {
+                "description": "Materiały niebezpieczne klasa 3",
+                "quantity": 10,
+                "unit": "TEU",
+                "imdg_hazard_class": "class_3_flammable_liquids",
+                "un_number": "UN1203",
+            },
+        ],
+        "unstructured_notes": [],
+    }
+
+    agent_extraction_service.apply_extraction_result(mock_db, nomination, extracted)
+
+    added_objects = [call.args[0] for call in mock_db.add.call_args_list]
+    cargo_manifests = [obj for obj in added_objects if obj.__class__.__name__ == "CargoManifest"]
+
+    assert len(cargo_manifests) == 3
+    descriptions = {cm.cargo_description for cm in cargo_manifests}
+    assert descriptions == {
+        "Kontenery suche, towary ogólne",
+        "Kontenery reefer, owoce mrożone",
+        "Materiały niebezpieczne klasa 3",
+    }
+    # Wszystkie powiązane z tą samą nominacją
+    assert all(cm.nomination_id == nomination.nomination_id for cm in cargo_manifests)
+    # Klasa IMDG poprawnie zmapowana per-element
+    hazard_classes = {cm.cargo_description: cm.imdg_hazard_class for cm in cargo_manifests}
+    from app.models.enums import ImdgHazardClass
+    assert hazard_classes["Materiały niebezpieczne klasa 3"] == ImdgHazardClass.class_3_flammable_liquids
+    assert hazard_classes["Kontenery suche, towary ogólne"] == ImdgHazardClass.none
+
+
+def test_apply_extraction_result_skips_cargo_item_without_description():
+    """description jest NOT NULL w bazie - element listy bez opisu jest
+    pomijany, ale nie wywala całego zapisu."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()
+
+    extracted = {
+        "vessel": {},
+        "cargo_items": [
+            {"description": "Kontenery suche", "quantity": 80},
+            {"description": "", "quantity": 10},  # brak opisu - powinien być pominięty
+            {"quantity": 5},  # brak description w ogóle
+        ],
+        "unstructured_notes": [],
+    }
+
+    agent_extraction_service.apply_extraction_result(mock_db, nomination, extracted)
+
+    added_objects = [call.args[0] for call in mock_db.add.call_args_list]
+    cargo_manifests = [obj for obj in added_objects if obj.__class__.__name__ == "CargoManifest"]
+    assert len(cargo_manifests) == 1
+    assert cargo_manifests[0].cargo_description == "Kontenery suche"
 
 
 def test_apply_extraction_result_unknown_imdg_class_falls_back_to_none():
@@ -171,7 +315,7 @@ def test_apply_extraction_result_saves_technical_specs_when_vessel_known():
                 "container_capacity_teu": 3500,
             }
         },
-        "cargo": {},
+        "cargo_items": [],
         "unstructured_notes": [],
     }
 
@@ -195,7 +339,7 @@ def test_apply_extraction_result_skips_technical_specs_when_vessel_unknown():
 
     extracted = {
         "vessel": {"technical_specs": {"length_overall_meters": 199.9}},
-        "cargo": {},
+        "cargo_items": [],
         "unstructured_notes": [],
     }
 
@@ -215,7 +359,7 @@ def test_apply_extraction_result_saves_requested_port_services():
 
     extracted = {
         "vessel": {},
-        "cargo": {},
+        "cargo_items": [],
         "requested_services": [
             {"service_type": "towage", "notes": "2 holowniki przy wejściu"},
             {"service_type": "crew_change", "notes": "Zmiana 4 marynarzy"},
@@ -240,7 +384,7 @@ def test_apply_extraction_result_skips_unknown_service_type():
 
     extracted = {
         "vessel": {},
-        "cargo": {},
+        "cargo_items": [],
         "requested_services": [
             {"service_type": "nieznana_usluga_xyz", "notes": "coś dziwnego"},
         ],
