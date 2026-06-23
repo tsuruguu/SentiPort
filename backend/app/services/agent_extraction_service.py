@@ -1,16 +1,19 @@
 import json
 import logging
 import threading
-from typing import Optional
+import time
+from typing import List, Optional
 import uuid
 
 from elevenlabs.client import ElevenLabs
 from elevenlabs.conversational_ai.conversation import Conversation, ConversationInitiationData
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 
 from app.config import settings
 from app.core.exceptions import LLMParsingError, EntityNotFoundError
-from app.models.operations import Nomination, NominationUnstructuredNote, CargoManifest, PortServiceOrder
+from app.models.operations import Nomination, NominationUnstructuredNote, CargoManifest, PortServiceOrder, \
+    NominationAttachment
 from app.models.vessel import VesselTechnicalSpecs
 from app.models.enums import NominationStatus, ImdgHazardClass, PortServiceType
 from app.repositories import vessel_repository, port_repository, company_repository, country_repository
@@ -20,6 +23,12 @@ logger = logging.getLogger(__name__)
 # Ile maksymalnie czekamy na odpowiedź agenta w jednej "rozmowie" o mailu
 # nominacyjnym. Agenci konwersacyjni bywają wolniejsi niż zwykłe API.
 AGENT_RESPONSE_TIMEOUT_SECONDS = 60.0
+
+# Ile czekamy, aż serwer ElevenLabs przyśle conversation_id po
+# start_session() - potrzebny TYLKO gdy mamy załączniki do wysłania
+# (upload_file wymaga już istniejącej, aktywnej konwersacji).
+CONVERSATION_ID_TIMEOUT_SECONDS = 10.0
+CONVERSATION_ID_POLL_INTERVAL_SECONDS = 0.1
 
 
 def _build_agent_payload(nomination: Nomination) -> dict:
@@ -39,7 +48,54 @@ def _build_agent_payload(nomination: Nomination) -> dict:
     }
 
 
-def call_extraction_agent(payload: dict) -> dict:
+def _wait_for_conversation_id(conversation: Conversation) -> str:
+    """
+    Czeka, aż SDK ustali ID aktywnej konwersacji (przychodzi z serwera
+    krótko po start_session(), asynchronicznie).
+
+    UWAGA - kruchość: SDK (elevenlabs==2.54.0) nie udostępnia tego ID
+    publicznie przed końcem sesji (wait_for_session_end() blokuje do
+    zamknięcia, czyli za późno na upload pliku W TRAKCIE rozmowy).
+    Czytamy więc prywatny atrybut `_conversation_id` z krótkim pollingiem.
+    Jeśli po aktualizacji SDK to przestanie działać, szukać publicznego
+    odpowiednika (np. property `conversation_id` albo callback startowy)
+    w changelogu elevenlabs-python.
+    """
+    deadline = time.monotonic() + CONVERSATION_ID_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        conv_id = getattr(conversation, "_conversation_id", None)
+        if conv_id:
+            return conv_id
+        time.sleep(CONVERSATION_ID_POLL_INTERVAL_SECONDS)
+    raise LLMParsingError(
+        details=f"Nie udało się uzyskać conversation_id w ciągu {CONVERSATION_ID_TIMEOUT_SECONDS}s "
+                f"- nie można wysłać załączników."
+    )
+
+
+def _upload_attachments(client: ElevenLabs, conversation_id: str, attachments: List[NominationAttachment]) -> List[str]:
+    """
+    Wgrywa załączniki PDF do aktywnej konwersacji przez REST endpoint
+    (POST /v1/convai/conversations/:id/files), zwraca listę file_id do
+    przekazania agentowi przez send_multimodal_message.
+
+    Błąd przy jednym pliku nie przerywa wysyłki pozostałych - logujemy i
+    kontynuujemy, żeby jeden zepsuty plik nie zablokował całej ekstrakcji.
+    """
+    file_ids = []
+    for att in attachments:
+        try:
+            response = client.conversational_ai.conversations.files.create(
+                conversation_id,
+                file=(att.filename, att.file_data, att.content_type),
+            )
+            file_ids.append(response.file_id)
+        except Exception:
+            logger.exception("Nie udało się wgrać załącznika '%s' do konwersacji %s.", att.filename, conversation_id)
+    return file_ids
+
+
+def call_extraction_agent(payload: dict, attachments: Optional[List[NominationAttachment]] = None) -> dict:
     """
     Wywołuje agenta ElevenLabs (Chat Mode - czysty tekst, bez audio) i
     czeka na jego odpowiedź synchronicznie.
@@ -48,9 +104,16 @@ def call_extraction_agent(payload: dict) -> dict:
     konwersacyjnej z odpowiedziami dostarczanymi przez callback
     (`callback_agent_response`), nie jako zwrotka z funkcji. Żeby
     wpasować to w nasz model "wyślij request, dostań response",
-    otwieramy sesję, wysyłamy treść maila jako jedną wiadomość tekstową,
-    i blokujemy się na threading.Event, aż callback dostarczy pierwszą
-    odpowiedź agenta - lub aż upłynie timeout.
+    otwieramy sesję, wysyłamy treść maila (+ ewentualne załączniki PDF
+    z maila armatora), i blokujemy się na threading.Event, aż callback
+    dostarczy pierwszą odpowiedź agenta - lub aż upłynie timeout.
+
+    Jeśli `attachments` nie jest pustą listą: po starcie sesji czekamy na
+    conversation_id, wgrywamy każdy plik przez REST, i wysyłamy JEDNĄ
+    wiadomość multimodalną (tekst maila + referencje do plików) - agent
+    sam wyciągnie dane z PDF-a zgodnie ze swoim systemowym promptem.
+    Bez załączników wysyłamy zwykłą wiadomość tekstową (szybsza ścieżka,
+    nie wymaga czekania na conversation_id).
 
     Agent (zgodnie z jego systemowym promptem) ma odpowiedzieć czystym
     JSON-em zgodnym z naszym kontraktem (AgentExtractionResponse) - tutaj
@@ -61,6 +124,7 @@ def call_extraction_agent(payload: dict) -> dict:
             details="Brak ELEVENLABS_API_KEY lub ELEVENLABS_AGENT_ID - agent kolegi nie jest skonfigurowany."
         )
 
+    attachments = attachments or []
     client = ElevenLabs(api_key=settings.ELEVENLABS_API_KEY)
 
     response_received = threading.Event()
@@ -93,10 +157,22 @@ def call_extraction_agent(payload: dict) -> dict:
 
     try:
         conversation.start_session()
-        # Treść maila jako jedna wiadomość tekstowa - agent ma system
-        # prompt nauczony zwracać czysty JSON zgodny z naszym kontraktem.
         email_message = json.dumps(payload["email"], ensure_ascii=False)
-        conversation.send_user_message(email_message)
+
+        if attachments:
+            conversation_id = _wait_for_conversation_id(conversation)
+            file_ids = _upload_attachments(client, conversation_id, attachments)
+            if file_ids:
+                # Jedna wiadomość multimodalna: tekst maila + referencje
+                # do wgranych plików - agent czyta oba na raz.
+                for file_id in file_ids[:-1]:
+                    conversation.send_multimodal_message(file_id=file_id)
+                conversation.send_multimodal_message(text=email_message, file_id=file_ids[-1])
+            else:
+                logger.warning("Brak poprawnie wgranych załączników - wysyłam tylko tekst maila.")
+                conversation.send_user_message(email_message)
+        else:
+            conversation.send_user_message(email_message)
 
         if not response_received.wait(timeout=AGENT_RESPONSE_TIMEOUT_SECONDS):
             raise LLMParsingError(
@@ -305,13 +381,31 @@ def apply_extraction_result(db: Session, nomination: Nomination, extracted: dict
 
 def extract_and_apply(db: Session, nomination_id: uuid.UUID) -> Nomination:
     """
-    Pełny przepływ dla jednej nominacji: wywołuje agenta z treścią maila,
-    a wynik mapuje na rekordy bazy.
+    Pełny przepływ dla jednej nominacji: wywołuje agenta z treścią maila
+    (+ ewentualne nieprzesłane jeszcze załączniki PDF), a wynik mapuje
+    na rekordy bazy.
+
+    Załączniki są wysyłane tylko raz - jeśli ten endpoint zostanie
+    wywołany powtórnie dla tej samej nominacji (np. ręczna ponowna
+    próba), pliki już oznaczone jako sent_to_agent_at nie są wysyłane
+    drugi raz.
     """
     nomination = db.query(Nomination).filter(Nomination.nomination_id == nomination_id).first()
     if not nomination:
         raise EntityNotFoundError(entity_name="Nomination", entity_id=nomination_id)
 
+    pending_attachments = db.query(NominationAttachment).filter(
+        NominationAttachment.nomination_id == nomination_id,
+        NominationAttachment.sent_to_agent_at.is_(None),
+    ).all()
+
     payload = _build_agent_payload(nomination)
-    extracted = call_extraction_agent(payload)
+    extracted = call_extraction_agent(payload, attachments=pending_attachments)
+
+    if pending_attachments:
+        now = func.now()
+        for att in pending_attachments:
+            att.sent_to_agent_at = now
+            db.add(att)
+
     return apply_extraction_result(db, nomination, extracted)

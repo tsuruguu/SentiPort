@@ -3,7 +3,7 @@ import logging
 from imap_tools import MailBox, AND
 from sqlalchemy.exc import IntegrityError
 from app.database import SessionLocal
-from app.models.operations import Nomination
+from app.models.operations import Nomination, NominationAttachment
 from app.models.vessel import Vessel
 from app.models.company import Company
 from app.models.reference import Port
@@ -16,6 +16,11 @@ logger = logging.getLogger(__name__)
 # już w INBOX.
 IMPORTED_FOLDER = "Imported"
 FAILED_FOLDER = "ImportFailed"
+
+# Tylko te typy załączników zapisujemy jako attachment nominacji - inne
+# (np. obrazki w stopce maila, podpisy graficzne) są ignorowane, żeby nie
+# zaśmiecać bazy.
+ACCEPTED_ATTACHMENT_CONTENT_TYPES = {"application/pdf"}
 
 
 def get_email_hash(subject: str, body: str, sender: str, date) -> str:
@@ -33,6 +38,47 @@ def _ensure_folder(mailbox: MailBox, folder_name: str) -> None:
     existing = {f.name for f in mailbox.folder.list()}
     if folder_name not in existing:
         mailbox.folder.create(folder_name)
+
+
+def _save_attachments(db, nomination_id, attachments) -> int:
+    """
+    Zapisuje załączniki PDF maila jako wiersze w nomination_attachments.
+
+    Deduplikacja: hash SHA-256 treści pliku + UNIQUE(nomination_id,
+    file_hash_sha256) w bazie - jeśli ten sam plik trafiłby tu drugi raz
+    (np. przy ponownym uruchomieniu sync na tym samym mailu w trakcie
+    debugowania), insert po prostu się nie powtórzy.
+
+    Inne typy plików niż PDF (np. obrazki w stopce maila) są ignorowane -
+    patrz ACCEPTED_ATTACHMENT_CONTENT_TYPES.
+
+    Zwraca liczbę faktycznie zapisanych załączników.
+    """
+    saved_count = 0
+    for att in attachments:
+        if att.content_type not in ACCEPTED_ATTACHMENT_CONTENT_TYPES:
+            logger.info("Pomijam załącznik '%s' - nieobsługiwany typ %s.", att.filename, att.content_type)
+            continue
+
+        file_hash = hashlib.sha256(att.payload).hexdigest()
+        attachment = NominationAttachment(
+            nomination_id=nomination_id,
+            filename=att.filename or "attachment.pdf",
+            content_type=att.content_type,
+            file_size_bytes=len(att.payload),
+            file_data=att.payload,
+            file_hash_sha256=file_hash,
+        )
+        try:
+            db.add(attachment)
+            db.flush()  # wymusza sprawdzenie UNIQUE constraint już teraz, bez czekania na końcowy commit
+            saved_count += 1
+        except IntegrityError:
+            # Duplikat tego samego pliku dla tej samej nominacji - pomijamy.
+            db.rollback()
+            logger.info("Załącznik '%s' (hash=%s) już istnieje dla tej nominacji, pomijam.", att.filename, file_hash[:8])
+
+    return saved_count
 
 
 def sync_emails(imap_host: str, user: str, password: str, port: int = 143) -> dict:
@@ -125,10 +171,19 @@ def sync_emails(imap_host: str, user: str, password: str, port: int = 143) -> di
                 # z INBOX, żeby fizycznie nie mógł zostać zaimportowany
                 # drugi raz, nawet po przywróceniu flagi "unseen".
                 mailbox.move(msg.uid, IMPORTED_FOLDER)
-                logger.info("Zaimportowano mail: '%s' -> nomination_id=%s", msg.subject, new_nom.nomination_id)
+
+                # Załączniki zapisujemy PO udanym commicie nominacji, bo
+                # wymagają już istniejącego nomination_id (FK NOT NULL).
+                attachments_saved = _save_attachments(db, new_nom.nomination_id, msg.attachments)
+                if attachments_saved:
+                    db.commit()
+
+                logger.info("Zaimportowano mail: '%s' -> nomination_id=%s (załączników: %d)",
+                           msg.subject, new_nom.nomination_id, attachments_saved)
                 summary["imported"].append({
                     "subject": msg.subject,
                     "nomination_id": str(new_nom.nomination_id),
+                    "attachments_saved": attachments_saved,
                 })
 
     finally:

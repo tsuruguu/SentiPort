@@ -407,3 +407,146 @@ def test_extract_and_apply_raises_when_nomination_missing(mock_call_agent):
         agent_extraction_service.extract_and_apply(mock_db, uuid.uuid4())
 
     mock_call_agent.assert_not_called()
+
+
+def _make_fake_attachment(filename="nominacja.pdf"):
+    att = MagicMock()
+    att.filename = filename
+    att.content_type = "application/pdf"
+    att.file_data = b"%PDF-1.4 fake content"
+    att.sent_to_agent_at = None
+    return att
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_uploads_attachment_and_sends_multimodal_message(
+    mock_settings, mock_elevenlabs_cls, mock_conversation_cls
+):
+    """Jeśli są załączniki, agent powinien dostać wiadomość multimodalną
+    (tekst + file_id), a nie zwykłą send_user_message."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_client = MagicMock()
+    mock_elevenlabs_cls.return_value = mock_client
+    mock_upload_response = MagicMock(file_id="file_abc123")
+    mock_client.conversational_ai.conversations.files.create.return_value = mock_upload_response
+
+    mock_conversation = MagicMock()
+    # Symulujemy, że conversation_id jest już dostępny od razu po starcie.
+    mock_conversation._conversation_id = "conv_xyz789"
+    mock_conversation_cls.return_value = mock_conversation
+
+    def fake_start_session():
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback('{"vessel": {"imo_number": "9456789"}}')
+
+    mock_conversation.start_session.side_effect = fake_start_session
+
+    att = _make_fake_attachment()
+    result = agent_extraction_service.call_extraction_agent(
+        {"nomination_id": "abc", "email": {"subject": "test", "body": "test"}},
+        attachments=[att],
+    )
+
+    assert result == {"vessel": {"imo_number": "9456789"}}
+    mock_client.conversational_ai.conversations.files.create.assert_called_once_with(
+        "conv_xyz789",
+        file=("nominacja.pdf", b"%PDF-1.4 fake content", "application/pdf"),
+    )
+    mock_conversation.send_multimodal_message.assert_called_once_with(
+        text='{"subject": "test", "body": "test"}', file_id="file_abc123"
+    )
+    mock_conversation.send_user_message.assert_not_called()
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_falls_back_to_text_when_upload_fails(
+    mock_settings, mock_elevenlabs_cls, mock_conversation_cls
+):
+    """Jeśli wgranie WSZYSTKICH załączników się nie powiedzie, agent i
+    tak dostaje przynajmniej tekst maila - nie wybuchamy całkowicie."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_client = MagicMock()
+    mock_elevenlabs_cls.return_value = mock_client
+    mock_client.conversational_ai.conversations.files.create.side_effect = Exception("upload failed")
+
+    mock_conversation = MagicMock()
+    mock_conversation._conversation_id = "conv_xyz789"
+    mock_conversation_cls.return_value = mock_conversation
+
+    def fake_start_session():
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback('{"vessel": {}}')
+
+    mock_conversation.start_session.side_effect = fake_start_session
+
+    att = _make_fake_attachment()
+    result = agent_extraction_service.call_extraction_agent(
+        {"nomination_id": "abc", "email": {"subject": "test", "body": "test"}},
+        attachments=[att],
+    )
+
+    assert result == {"vessel": {}}
+    mock_conversation.send_user_message.assert_called_once()
+    mock_conversation.send_multimodal_message.assert_not_called()
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_without_attachments_uses_plain_text_message(
+    mock_settings, mock_elevenlabs_cls, mock_conversation_cls
+):
+    """Bez załączników nie czekamy na conversation_id - szybsza ścieżka
+    przez zwykłą send_user_message."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_conversation = MagicMock()
+    mock_conversation_cls.return_value = mock_conversation
+
+    def fake_start_session():
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback('{"vessel": {}}')
+
+    mock_conversation.start_session.side_effect = fake_start_session
+
+    agent_extraction_service.call_extraction_agent(
+        {"nomination_id": "abc", "email": {"subject": "test", "body": "test"}}
+    )
+
+    mock_conversation.send_user_message.assert_called_once()
+    mock_conversation.send_multimodal_message.assert_not_called()
+
+
+@patch("app.services.agent_extraction_service.apply_extraction_result")
+@patch("app.services.agent_extraction_service.call_extraction_agent")
+def test_extract_and_apply_passes_pending_attachments_and_marks_them_sent(mock_call_agent, mock_apply):
+    """extract_and_apply powinien dociągnąć tylko NIEWYSŁANE jeszcze
+    załączniki, przekazać je do agenta, i oznaczyć jako wysłane po
+    udanym wywołaniu."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()
+    pending_attachment = _make_fake_attachment()
+
+    # Pierwsze query().filter().first() -> nominacja; drugie query().filter().all() -> załączniki
+    mock_db.query.return_value.filter.return_value.first.return_value = nomination
+    mock_db.query.return_value.filter.return_value.all.return_value = [pending_attachment]
+
+    mock_call_agent.return_value = {"vessel": {}}
+    mock_apply.return_value = nomination
+
+    agent_extraction_service.extract_and_apply(mock_db, nomination.nomination_id)
+
+    mock_call_agent.assert_called_once()
+    call_kwargs = mock_call_agent.call_args.kwargs
+    assert call_kwargs["attachments"] == [pending_attachment]
+    # Załącznik powinien zostać oznaczony jako wysłany
+    assert pending_attachment.sent_to_agent_at is not None

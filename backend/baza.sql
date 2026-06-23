@@ -847,6 +847,30 @@ CREATE INDEX idx_unstructured_notes_text_trgm ON nomination_unstructured_notes U
 COMMENT ON TABLE nomination_unstructured_notes IS 'Niesklasyfikowane fragmenty treści maila nominacyjnego, które nie pasują do sztywnych kolumn - przeszukiwalne pełnotekstowo (pg_trgm), z flagą wymagającą przeglądu człowieka.';
 
 -- ----------------------------------------------------------------------------
+-- nomination_attachments: pliki załączone do maila nominacyjnego (np. skan
+-- nominacji w PDF). Plik trzymany bezpośrednio w bazie jako BYTEA - prosto,
+-- zero dodatkowej infrastruktury storage (S3 itp.) na etapie hakatonu.
+-- ----------------------------------------------------------------------------
+CREATE TABLE nomination_attachments (
+                                         attachment_id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                                         nomination_id              UUID NOT NULL REFERENCES nominations(nomination_id) ON DELETE CASCADE,
+                                         filename                      VARCHAR(255) NOT NULL,
+                                         content_type                    VARCHAR(100) NOT NULL DEFAULT 'application/pdf',
+                                         file_size_bytes                   INTEGER NOT NULL,
+                                         file_data                            BYTEA NOT NULL,  -- surowa treść pliku
+                                         file_hash_sha256                        VARCHAR(64) NOT NULL,  -- integralność + dedup
+    -- Czy plik został już wysłany do agenta ekstrakcji (ElevenLabs) -
+    -- przydatne, żeby nie wysyłać tego samego pliku wielokrotnie przy
+    -- ponownym wywołaniu /extract dla tej samej nominacji.
+                                         sent_to_agent_at                           TIMESTAMPTZ,
+                                         agent_file_id                                 VARCHAR(100),  -- file_id zwrócony przez ElevenLabs
+                                         created_at                                       TIMESTAMPTZ NOT NULL DEFAULT now(),
+                                         CONSTRAINT uq_attachment_hash_per_nomination UNIQUE (nomination_id, file_hash_sha256)
+);
+CREATE INDEX idx_attachments_nomination ON nomination_attachments(nomination_id);
+COMMENT ON TABLE nomination_attachments IS 'Załączniki (PDF/obrazy) z maila nominacyjnego, przechowywane jako BYTEA. file_hash_sha256 chroni przed zduplikowanym zapisem tego samego pliku przy wielokrotnym imporcie maila.';
+
+-- ----------------------------------------------------------------------------
 -- port_calls: konkretna wizyta statku w porcie (1 nominacja zwykle -> 1 wizyta)
 -- ----------------------------------------------------------------------------
 CREATE TABLE port_calls (

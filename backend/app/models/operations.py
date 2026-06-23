@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Boolean, Numeric, SmallInteger
+from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Boolean, Numeric, SmallInteger, Integer, LargeBinary
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.sql import func
@@ -115,3 +115,34 @@ class PortServiceOrder(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class NominationAttachment(Base):
+    """
+    Plik załączony do maila nominacyjnego (np. skan nominacji w PDF),
+    przechowywany bezpośrednio w bazie jako BYTEA - bez dodatkowej
+    infrastruktury storage (S3 itp.) na etapie hakatonu.
+
+    file_hash_sha256 + UNIQUE(nomination_id, file_hash_sha256) w bazie
+    chronią przed zduplikowanym zapisem tego samego pliku przy
+    wielokrotnym imporcie tego samego maila.
+    """
+    __tablename__ = "nomination_attachments"
+    __table_args__ = {"schema": "port_intel"}
+
+    attachment_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    nomination_id = Column(UUID(as_uuid=True), ForeignKey("port_intel.nominations.nomination_id", ondelete="CASCADE"),
+                           nullable=False)
+    filename = Column(String(255), nullable=False)
+    content_type = Column(String(100), default="application/pdf", nullable=False)
+    file_size_bytes = Column(Integer, nullable=False)
+    file_data = Column(LargeBinary, nullable=False)  # surowa treść pliku (BYTEA w Postgresie)
+    file_hash_sha256 = Column(String(64), nullable=False)
+
+    # Czy plik został już wysłany do agenta ekstrakcji (ElevenLabs) -
+    # przydatne, żeby nie wysyłać tego samego pliku wielokrotnie przy
+    # ponownym wywołaniu /extract dla tej samej nominacji.
+    sent_to_agent_at = Column(DateTime(timezone=True))
+    agent_file_id = Column(String(100))  # file_id zwrócony przez ElevenLabs
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
