@@ -17,7 +17,7 @@ def seed_additional_nominations(db: Session, count: int = 50):
     Generuje potężną paczkę (np. 50 sztuk) realistycznych danych operacyjnych.
     Zapewni to piękny, "żywy" dashboard podczas prezentacji dla jury.
     """
-    # 1. Pobieramy pule zasobów z bazy (te wgrane z baza.sql)
+    # 1. Pobieramy pule zasobów z bazy
     vessels = db.query(Vessel).all()
     companies = db.query(Company).all()
     ports = db.query(Port).all()
@@ -35,7 +35,7 @@ def seed_additional_nominations(db: Session, count: int = 50):
 
     now_utc = datetime.now(timezone.utc)
 
-    # Listy pomocnicze do urealnienia danych
+    # Listy pomocnicze
     subjects = [
         "Vessel Nomination", "Notice of Readiness", "Port Call Request",
         "ETA Update", "Urgent: Berth requirement", "Agency Appointment"
@@ -51,38 +51,31 @@ def seed_additional_nominations(db: Session, count: int = 50):
         "Agent poproszony o zorganizowanie transportu dla inspektora klasy."
     ]
 
-    new_nominations = []
-
     logger.info(f"🚀 Generowanie {count} potężnych nominacji dla Agenta...")
 
     for i in range(count):
-        # Losujemy obiekty
         vessel = random.choice(vessels)
         company = random.choice(companies)
         port = random.choice(ports)
         berth = random.choice(berths) if random.random() > 0.3 else None
 
-        # Różnorodność statusów na dashboardzie
+        # Statusy
         status_weights = [
-            (NominationStatus.completed, 0.40),  # 40% historycznych
-            (NominationStatus.parsed_pending_review, 0.20),  # 20% czeka na akcję agenta (świeże od LLM)
-            (NominationStatus.received, 0.10),  # 10% dopiero wpadło
-            (NominationStatus.verified, 0.15),  # 15% w procesie (zaakceptowane)
-            (NominationStatus.submitted_to_port, 0.10),  # 10% u kapitanatu
-            (NominationStatus.rejected, 0.05)  # 5% odrzucone z problemami
+            (NominationStatus.completed, 0.40),
+            (NominationStatus.parsed_pending_review, 0.20),
+            (NominationStatus.received, 0.10),
+            (NominationStatus.verified, 0.15),
+            (NominationStatus.submitted_to_port, 0.10),
+            (NominationStatus.rejected, 0.05)
         ]
         status = random.choices([s[0] for s in status_weights], weights=[s[1] for s in status_weights], k=1)[0]
 
-        # Daty: historyczne vs przyszłe
-        if status == NominationStatus.completed:
-            eta_days = random.randint(-30, -2)
-        else:
-            eta_days = random.randint(-1, 14)
-
+        # Daty
+        eta_days = random.randint(-30, -2) if status == NominationStatus.completed else random.randint(-1, 14)
         eta = now_utc + timedelta(days=eta_days, hours=random.randint(0, 23))
         etd = eta + timedelta(days=random.randint(1, 4), hours=random.randint(0, 12))
 
-        # Tworzymy główny rekord Nominacji
+        # Rekord Nominacji
         nomination = Nomination(
             vessel_id=vessel.vessel_id,
             nominating_company_id=company.company_id,
@@ -92,33 +85,34 @@ def seed_additional_nominations(db: Session, count: int = 50):
             etd=etd,
             assigned_berth_id=berth.berth_id if berth else None,
             source_email_subject=f"{random.choice(subjects)} - {vessel.current_vessel_name}",
-            source_email_body_raw=f"Automatycznie wygenerowany testowy mail od armatora. Statek: {vessel.current_vessel_name}, IMO: {vessel.imo_number}.",
-            assigned_agent_name="Michał Samaruk",  # Agent z notatek
+            source_email_body_raw=f"Automatycznie wygenerowany mail. Statek: {vessel.current_vessel_name}, IMO: {vessel.imo_number}.",
+            assigned_agent_name="Michał Samaruk",
             llm_extraction_metadata={
                 "confidence_score": round(random.uniform(0.75, 0.99), 2),
-                "model": "gpt-4o-mini",
-                "extracted_fields": ["vessel_name", "imo_number", "eta", "cargo_details"]
+                "model": "gpt-4o-mini"
             }
         )
         db.add(nomination)
-        db.flush()  # Pobieramy nomination_id żeby móc przypisać ładunki i notatki
+        db.flush()
 
-        # Dodajemy ładunek (Cargo Manifest)
+        # Ładunek z dynamicznie generowanymi wagami (TO JEST KLUCZ DO NAPRAWY BŁĘDU)
         imdg_classes = list(ImdgHazardClass)
+        # Tworzymy wagi o dokładnie takiej samej długości jak lista klas
+        dynamic_weights = [1.0 / len(imdg_classes) for _ in imdg_classes]
+
         cargo = CargoManifest(
             nomination_id=nomination.nomination_id,
             cargo_description=f"Partia towaru dla {vessel.current_vessel_name}",
             cargo_quantity=random.randint(100, 50000),
             cargo_unit=random.choice(["tonnes", "TEU", "CBM"]),
-            imdg_hazard_class=
-            random.choices(imdg_classes, weights=[0.8, 0.02, 0.05, 0.05, 0.02, 0.01, 0.01, 0.01, 0.02, 0.01], k=1)[0],
+            imdg_hazard_class=random.choices(imdg_classes, weights=dynamic_weights, k=1)[0],
             requires_refrigeration=(random.random() > 0.8),
             is_perishable=(random.random() > 0.85)
         )
         db.add(cargo)
 
-        # Dodajemy niesklasyfikowaną notatkę od LLM-a (wymagającą uwagi człowieka)
-        if random.random() > 0.5:  # 50% szans, że z maila wyciągnięto coś "ekstra"
+        # Notatka
+        if random.random() > 0.5:
             note = NominationUnstructuredNote(
                 nomination_id=nomination.nomination_id,
                 note_text=random.choice(notes),
@@ -130,7 +124,7 @@ def seed_additional_nominations(db: Session, count: int = 50):
 
     try:
         db.commit()
-        logger.info(f"✅ Sukces! Wygenerowano i wstrzyknięto do bazy {count} nowych nominacji.")
+        logger.info(f"✅ Sukces! Wygenerowano {count} nominacji.")
     except Exception as e:
         db.rollback()
-        logger.error(f"❌ Błąd podczas potężnego seeda: {e}")
+        logger.error(f"❌ Błąd podczas seedowania: {e}")
