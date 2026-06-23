@@ -36,3 +36,18 @@ def health_check():
 
 # Podpinamy CAŁE drzewo naszych endpointów (vessels, ports, risk, nominations)
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+from fastapi import BackgroundTasks
+
+
+@app.on_event("startup")
+def startup_event():
+    # Odpalamy generator 50 nominacji w tle przy starcie serwera
+    from app.database import SessionLocal
+    from seed.seed_data import seed_additional_nominations
+
+    db = SessionLocal()
+    try:
+        seed_additional_nominations(db, count=50)
+    finally:
+        db.close()
