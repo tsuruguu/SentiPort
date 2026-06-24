@@ -1,9 +1,11 @@
 import React from 'react';
+import { mockMailbox } from '../../api/mockData';
 
 export default function Sidebar({ currentView, setCurrentView }) {
   const menuItems = [
     { id: 'dashboard', label: 'Panel główny' },
-    { id: 'inbox', label: 'Skrzynka 13', count: 13 },
+    // Etykieta to teraz "Skrzynka", a licznik dynamicznie czyta długość tablicy z mockData
+    { id: 'inbox', label: 'Skrzynka', count: mockMailbox.items.length },
     { id: 'providers', label: 'Dostawcy usług' },
     { id: 'berths', label: 'Nadbrzeża' },
   ];
@@ -18,9 +20,8 @@ export default function Sidebar({ currentView, setCurrentView }) {
             className={`nav-item ${currentView === item.id ? 'active' : ''}`}
             onClick={() => setCurrentView(item.id)}
           >
-            {/* Tutaj mogłyby być ikony z lucide-react */}
             <span>{item.label}</span>
-            {item.count && <span className="nav-count">{item.count}</span>}
+            {item.count > 0 && <span className="nav-count">{item.count}</span>}
           </div>
         ))}
       </nav>

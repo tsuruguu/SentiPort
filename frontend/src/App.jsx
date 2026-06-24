@@ -4,6 +4,8 @@ import TopRightAvatar from './components/layout/TopRightAvatar';
 import ActionButtons from './components/ActionButtons';
 import Dashboard from './views/Dashboard/Dashboard';
 import Inbox from './views/Inbox/Inbox';
+import Providers from './views/Providers'; // Nowy import
+import Berths from './views/Berths';       // Nowy import
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -14,10 +16,13 @@ function App() {
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
 
       <main className="main-content">
+        {/* Renderowanie warunkowe w zależności od klikniętej zakładki */}
         {currentView === 'dashboard' && <Dashboard nominationId={selectedNominationId} />}
         {currentView === 'inbox' && <Inbox />}
+        {currentView === 'providers' && <Providers />}
+        {currentView === 'berths' && <Berths />}
 
-        {/* Dolne przyciski widoczne na obu ekranach? Według PDF głównie na dashboardzie */}
+        {/* Przyciski na dole pokazujemy tylko w panelu głównym */}
         {currentView === 'dashboard' && (
           <ActionButtons nominationId={selectedNominationId} />
         )}

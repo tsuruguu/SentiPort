@@ -6,7 +6,7 @@ export const mockNominationDetail = {
     current_vessel_name: "Valdemar Construction"
   },
   vessel_technical_specs: {
-    length_overall_meters: 450, // Celowo błąd logiczny dla statku, by AI to wyłapało
+    length_overall_meters: 450,
     beam_meters: 40,
     draft_meters: 14.5
   },
@@ -14,32 +14,40 @@ export const mockNominationDetail = {
     company_name: "Maersk Line A/S"
   },
   eta: "2026-07-15T14:00:00Z",
-  source_email_body_raw: "Hababababahababababba\nhabababba\nhababababab"
+  cargo_items: [
+    { description: "Chemikalia przemysłowe", imdg_hazard_class: "class_3_flammable_liquids", un_number: "UN 1203" }
+  ],
+  confidence_score: 0.85,
+  fields_missing: ["has_reefer_plugs", "ice_class_designation"]
 };
 
-// Wynik z agenta elevenLabs do walidacji danych (z vessel_enrichment.py)
 export const mockEnrichmentData = {
+  confidence_score: 0.92,
   inconsistencies_to_clarify: [
     {
       field_name: "length_overall_meters",
-      description: "Podana długość statku (450m) przekracza limity konstrukcyjne dla tej klasy. Weryfikacja rejestru wskazuje na 399m.",
+      description: "Podana długość statku (450m) przekracza limity rejestrowe.",
       severity: "high"
     }
+  ],
+  proposed_configuration: [
+    { field_name: "draft_meters", proposed_value: "14.5", is_inferred: true, confidence: 0.88, source_note: "Historia wizyt" }
   ]
+};
+
+export const mockRiskData = {
+  overall_risk_score: 75.5,
+  risk_tier: "high_risk",
+  paris_mou_tier: "grey",
+  sanctions_clear: true,
+  psc_detentions: 1
 };
 
 export const mockMailbox = {
   items: [
-    {
-      nomination_id: "1",
-      nominating_company: { company_name: "qdad...." },
-      source_email_subject: "wiadomość oryginalna fdjkfvawkfpkwafawgv......."
-    },
-    {
-      nomination_id: "2",
-      nominating_company: { company_name: "qdad...." },
-      source_email_subject: "wiadomość oryginalna fdjkfvawkfpkwafawgv......."
-    }
+    { nomination_id: "1", nominating_company: { company_name: "Maersk Line A/S" }, source_email_subject: "Awizacja statku Valdemar Construction" },
+    { nomination_id: "2", nominating_company: { company_name: "MSC" }, source_email_subject: "Zgłoszenie ładunku - MSC Zoe" },
+    { nomination_id: "3", nominating_company: { company_name: "Hapag-Lloyd" }, source_email_subject: "Zmiana ETA - Berlin Express" }
   ]
 };
 
