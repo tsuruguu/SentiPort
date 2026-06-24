@@ -24,6 +24,13 @@ logger = logging.getLogger(__name__)
 # nominacyjnym. Agenci konwersacyjni bywają wolniejsi niż zwykłe API.
 AGENT_RESPONSE_TIMEOUT_SECONDS = 60.0
 
+# Ile czekamy, aż WebSocket faktycznie się połączy po start_session()
+# (start_session() startuje wątek w tle i wraca natychmiast - NIE czeka
+# na połączenie - więc send_user_message() wywołane zaraz po niej może
+# trafić na "Session not started or websocket not connected").
+WEBSOCKET_READY_TIMEOUT_SECONDS = 10.0
+WEBSOCKET_READY_POLL_INTERVAL_SECONDS = 0.1
+
 # Ile czekamy, aż serwer ElevenLabs przyśle conversation_id po
 # start_session() - potrzebny TYLKO gdy mamy załączniki do wysłania
 # (upload_file wymaga już istniejącej, aktywnej konwersacji).
@@ -46,6 +53,32 @@ def _build_agent_payload(nomination: Nomination) -> dict:
                 if nomination.source_email_received_at else None,
         },
     }
+
+
+def _wait_for_websocket_ready(conversation: Conversation) -> None:
+    """
+    Czeka, aż wątek startujący sesję faktycznie połączy WebSocket.
+
+    UWAGA - kruchość: start_session() w SDK (elevenlabs==2.54.0) tylko
+    odpala wątek w tle i wraca natychmiast - nie czeka na połączenie.
+    Wywołanie send_user_message()/send_multimodal_message() zaraz po
+    start_session() bywa więc race-condition: trafia na moment, w
+    którym self._ws jest jeszcze None, i SDK rzuca RuntimeError
+    ("Session not started or websocket not connected"). Czekamy więc na
+    prywatny atrybut `_ws` z krótkim pollingiem - to ten sam wzorzec, co
+    przy _wait_for_conversation_id. Jeśli po aktualizacji SDK to
+    przestanie działać, szukać publicznej metody/callbacku potwierdzenia
+    otwarcia połączenia w changelogu elevenlabs-python.
+    """
+    deadline = time.monotonic() + WEBSOCKET_READY_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if getattr(conversation, "_ws", None):
+            return
+        time.sleep(WEBSOCKET_READY_POLL_INTERVAL_SECONDS)
+    raise LLMParsingError(
+        details=f"Połączenie WebSocket z agentem nie zostało ustanowione w ciągu "
+                f"{WEBSOCKET_READY_TIMEOUT_SECONDS}s."
+    )
 
 
 def _wait_for_conversation_id(conversation: Conversation) -> str:
@@ -157,6 +190,7 @@ def call_extraction_agent(payload: dict, attachments: Optional[List[NominationAt
 
     try:
         conversation.start_session()
+        _wait_for_websocket_ready(conversation)
         email_message = json.dumps(payload["email"], ensure_ascii=False)
 
         if attachments:

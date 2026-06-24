@@ -801,6 +801,11 @@ CREATE TABLE nominations (
                              etd                                           TIMESTAMPTZ,  -- Estimated Time of Departure
                              requested_berth_id                               UUID REFERENCES berths(berth_id),
                              assigned_berth_id                                   UUID REFERENCES berths(berth_id),
+    -- Hash treści maila (subject+body+sender+date) - kluczowy mechanizm
+    -- deduplikacji importu: nawet jeśli ktoś kliknie "Importuj" wiele
+    -- razy, ten sam mail nigdy nie zapisze się drugi raz (patrz
+    -- email_sync_service.py).
+                             email_hash                                             VARCHAR(64) UNIQUE,
     -- Surowa treść maila - zachowana w całości dla audytu i ponownego parsowania
                              source_email_subject                                   VARCHAR(500),
                              source_email_body_raw                                     TEXT,

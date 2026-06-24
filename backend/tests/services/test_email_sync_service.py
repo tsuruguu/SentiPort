@@ -29,7 +29,7 @@ class FakeFolderInfo:
 
 
 @patch("app.services.email_sync_service.SessionLocal")
-@patch("app.services.email_sync_service.MailBox")
+@patch("app.services.email_sync_service.MailBoxUnencrypted")
 def test_sync_emails_imports_new_mail_once(mock_mailbox_cls, mock_session_local):
     """Nowy mail (hash nie istnieje w bazie) powinien zostać zaimportowany
     i przeniesiony do folderu Imported."""
@@ -58,7 +58,7 @@ def test_sync_emails_imports_new_mail_once(mock_mailbox_cls, mock_session_local)
 
 
 @patch("app.services.email_sync_service.SessionLocal")
-@patch("app.services.email_sync_service.MailBox")
+@patch("app.services.email_sync_service.MailBoxUnencrypted")
 def test_sync_emails_skips_application_level_duplicate(mock_mailbox_cls, mock_session_local):
     """Jeśli hash maila już istnieje w bazie, mail NIE jest zapisywany
     drugi raz, ale i tak jest sprzątany z INBOX."""
@@ -87,7 +87,7 @@ def test_sync_emails_skips_application_level_duplicate(mock_mailbox_cls, mock_se
 
 
 @patch("app.services.email_sync_service.SessionLocal")
-@patch("app.services.email_sync_service.MailBox")
+@patch("app.services.email_sync_service.MailBoxUnencrypted")
 def test_sync_emails_handles_race_condition_integrity_error(mock_mailbox_cls, mock_session_local):
     """Jeśli baza odrzuci zapis przez UNIQUE constraint (race condition -
     dwa równoległe sync'i złapały ten sam mail), nie wywalamy całego
@@ -114,7 +114,7 @@ def test_sync_emails_handles_race_condition_integrity_error(mock_mailbox_cls, mo
 
 
 @patch("app.services.email_sync_service.SessionLocal")
-@patch("app.services.email_sync_service.MailBox")
+@patch("app.services.email_sync_service.MailBoxUnencrypted")
 def test_sync_emails_continues_after_unexpected_error(mock_mailbox_cls, mock_session_local):
     """Nieoczekiwany błąd przy jednym mailu (np. zły encoding) nie
     przerywa importu pozostałych maili w paczce - mail trafia do
@@ -145,7 +145,7 @@ def test_sync_emails_continues_after_unexpected_error(mock_mailbox_cls, mock_ses
 
 
 @patch("app.services.email_sync_service.SessionLocal")
-@patch("app.services.email_sync_service.MailBox")
+@patch("app.services.email_sync_service.MailBoxUnencrypted")
 def test_sync_emails_creates_missing_folders(mock_mailbox_cls, mock_session_local):
     """Jeśli foldery Imported/ImportFailed nie istnieją jeszcze na
     serwerze IMAP, sync powinien je utworzyć zamiast wybuchać."""
@@ -229,7 +229,7 @@ def test_save_attachments_handles_multiple_pdfs_in_one_mail():
 
 
 @patch("app.services.email_sync_service.SessionLocal")
-@patch("app.services.email_sync_service.MailBox")
+@patch("app.services.email_sync_service.MailBoxUnencrypted")
 def test_sync_emails_saves_pdf_attachment_with_new_nomination(mock_mailbox_cls, mock_session_local):
     """Test end-to-end: mail z załącznikiem PDF powinien zaimportować
     nominację ORAZ zapisać załącznik, z dodatkowym commitem."""

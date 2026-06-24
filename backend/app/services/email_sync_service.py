@@ -1,6 +1,6 @@
 import hashlib
 import logging
-from imap_tools import MailBox, AND
+from imap_tools import MailBoxUnencrypted, AND
 from sqlalchemy.exc import IntegrityError
 from app.database import SessionLocal
 from app.models.operations import Nomination, NominationAttachment
@@ -33,7 +33,7 @@ def get_email_hash(subject: str, body: str, sender: str, date) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
-def _ensure_folder(mailbox: MailBox, folder_name: str) -> None:
+def _ensure_folder(mailbox: MailBoxUnencrypted, folder_name: str) -> None:
     """Tworzy folder IMAP, jeśli jeszcze nie istnieje."""
     existing = {f.name for f in mailbox.folder.list()}
     if folder_name not in existing:
@@ -112,7 +112,13 @@ def sync_emails(imap_host: str, user: str, password: str, port: int = 143) -> di
     default_company = db.query(Company).first()
 
     try:
-        with MailBox(imap_host, port=port).login(user, password) as mailbox:
+        # MailBoxUnencrypted (nie MailBox!) - klasa MailBox z imap_tools
+        # ZAWSZE owija połączenie w SSL/TLS niezależnie od podanego portu,
+        # co na plain IMAP (port 143, bez wymuszonego szyfrowania - tak
+        # skonfigurowany jest nasz docker-mailserver) kończy się błędem
+        # "[SSL: WRONG_VERSION_NUMBER]" - serwer odpowiada zwykłym
+        # plain-text greeting, a klient czeka na TLS handshake.
+        with MailBoxUnencrypted(imap_host, port=port).login(user, password) as mailbox:
             _ensure_folder(mailbox, IMPORTED_FOLDER)
             _ensure_folder(mailbox, FAILED_FOLDER)
 

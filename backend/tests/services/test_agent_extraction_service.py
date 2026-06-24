@@ -63,6 +63,87 @@ def test_call_extraction_agent_success(mock_settings, mock_elevenlabs_cls, mock_
 
     assert result == {"vessel": {"imo_number": "9456789"}, "cargo": None}
     mock_conversation.send_user_message.assert_called_once()
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_waits_for_websocket_before_sending_message(
+    mock_settings, mock_elevenlabs_cls, mock_conversation_cls
+):
+    """Reprodukuje realny race condition: start_session() w prawdziwym
+    SDK tylko odpala wątek w tle i wraca natychmiast, więc _ws jest
+    jeszcze None na moment - send_user_message() wywołane zbyt wcześnie
+    rzuca RuntimeError w prawdziwym SDK. Sprawdzamy, że nasz kod CZEKA
+    (poll na _ws), zamiast wysyłać wiadomość na ślepo zaraz po starcie."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_conversation = MagicMock()
+    mock_conversation._ws = None  # symulujemy stan TUŻ PO start_session() - jeszcze nie połączone
+    mock_conversation_cls.return_value = mock_conversation
+
+    def fake_start_session():
+        # _ws jest jeszcze None w momencie powrotu z start_session() -
+        # tak jak w prawdziwym SDK, gdzie połączenie ustala się w wątku
+        # w tle, a start_session() wraca natychmiast.
+        pass
+
+    def fake_send_user_message(text):
+        # Jeśli kod próbowałby wysłać wiadomość PRZED ustawieniem _ws,
+        # tutaj złapalibyśmy to jako błąd identyczny z prawdziwym SDK.
+        if not mock_conversation._ws:
+            raise RuntimeError("Session not started or websocket not connected.")
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback('{"vessel": {}}')
+
+    mock_conversation.start_session.side_effect = fake_start_session
+    mock_conversation.send_user_message.side_effect = fake_send_user_message
+
+    # Symulujemy, że _ws ustawia się "z opóźnieniem" (jak prawdziwy wątek)
+    # - po dwóch sprawdzeniach pollingu nagle staje się gotowe.
+    call_counter = {"count": 0}
+    original_getattr = getattr
+
+    def fake_wait(conversation):
+        call_counter["count"] += 1
+        if call_counter["count"] >= 2:
+            mock_conversation._ws = MagicMock()  # teraz "połączone"
+        return agent_extraction_service.WEBSOCKET_READY_POLL_INTERVAL_SECONDS
+
+    with patch("app.services.agent_extraction_service.time.sleep", side_effect=lambda s: fake_wait(mock_conversation)):
+        result = agent_extraction_service.call_extraction_agent({
+            "nomination_id": "abc",
+            "email": {"subject": "test", "body": "test"},
+        })
+
+    assert result == {"vessel": {}}
+    mock_conversation.send_user_message.assert_called_once()
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_raises_if_websocket_never_connects(
+    mock_settings, mock_elevenlabs_cls, mock_conversation_cls
+):
+    """Jeśli WebSocket nigdy się nie połączy (_ws zostaje None na
+    zawsze), nie wisimy w nieskończoność - timeout i jasny błąd."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_conversation = MagicMock()
+    mock_conversation._ws = None
+    mock_conversation_cls.return_value = mock_conversation
+
+    with patch("app.services.agent_extraction_service.WEBSOCKET_READY_TIMEOUT_SECONDS", 0.05):
+        with pytest.raises(LLMParsingError):
+            agent_extraction_service.call_extraction_agent({
+                "nomination_id": "abc",
+                "email": {"subject": "test", "body": "test"},
+            })
+
+    mock_conversation.send_user_message.assert_not_called()
     mock_conversation.end_session.assert_called_once()
 
 

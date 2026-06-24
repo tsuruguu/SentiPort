@@ -1,6 +1,7 @@
 import json
 import logging
 import threading
+import time
 import uuid as uuid_module
 from typing import Optional
 
@@ -25,6 +26,27 @@ logger = logging.getLogger(__name__)
 MAX_PAYLOAD_SIZE_BYTES = 50 * 1024
 
 AGENT_RESPONSE_TIMEOUT_SECONDS = 60.0
+
+# Ile czekamy, aż WebSocket faktycznie się połączy po start_session()
+# (start_session() startuje wątek w tle i wraca natychmiast - nie czeka
+# na połączenie - więc send_user_message() wywołane zaraz po niej może
+# trafić na "Session not started or websocket not connected").
+WEBSOCKET_READY_TIMEOUT_SECONDS = 10.0
+WEBSOCKET_READY_POLL_INTERVAL_SECONDS = 0.1
+
+
+def _wait_for_websocket_ready(conversation: Conversation) -> None:
+    """Czeka, aż wątek startujący sesję faktycznie połączy WebSocket -
+    patrz identyczna funkcja i wyjaśnienie w agent_extraction_service.py."""
+    deadline = time.monotonic() + WEBSOCKET_READY_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if getattr(conversation, "_ws", None):
+            return
+        time.sleep(WEBSOCKET_READY_POLL_INTERVAL_SECONDS)
+    raise LLMParsingError(
+        details=f"Połączenie WebSocket z agentem wzbogacenia nie zostało ustanowione w ciągu "
+                f"{WEBSOCKET_READY_TIMEOUT_SECONDS}s."
+    )
 
 
 def _payload_size_bytes(payload: VesselHistoryPayload) -> int:
@@ -287,6 +309,7 @@ def call_enrichment_agent(payload: VesselHistoryPayload) -> dict:
 
     try:
         conversation.start_session()
+        _wait_for_websocket_ready(conversation)
         conversation.send_user_message(payload.model_dump_json())
 
         if not response_received.wait(timeout=AGENT_RESPONSE_TIMEOUT_SECONDS):
