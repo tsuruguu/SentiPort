@@ -21,6 +21,7 @@ export default function App() {
       <Routes>
         <Route element={<AppLayout inboxCount={inboxCount} />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/panel/:nominationId" element={<DashboardPage />} />
           <Route path="/skrzynka" element={<InboxPage />} />
           <Route path="/skrzynka/:nominationId" element={<NominationDetailPage />} />
           <Route path="/dostawcy" element={<ProvidersPage />} />

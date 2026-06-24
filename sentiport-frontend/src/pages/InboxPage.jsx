@@ -65,7 +65,7 @@ export default function InboxPage() {
             <li key={item.nomination_id}>
               <button
                 type="button"
-                onClick={() => navigate(`/skrzynka/${item.nomination_id}`)}
+                onClick={() => navigate(`/panel/${item.nomination_id}`)}
                 className="w-full text-left py-4 hover:bg-dockwise-mist/60 transition-colors rounded-lg px-2 -mx-2"
               >
                 <div className="flex items-center justify-between">

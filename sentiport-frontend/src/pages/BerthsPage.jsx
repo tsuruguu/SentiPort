@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApiData } from '../hooks/useApiData';
 import { portsApi } from '../api/ports';
 import GlassPanel from '../components/GlassPanel';
@@ -8,12 +8,22 @@ export default function BerthsPage() {
 
   const { data: ports, loading: portsLoading } = useApiData(() => portsApi.list(), []);
 
+  // Gdy lista portów się wczyta, domyślnie wybieramy pierwszy port -
+  // ale jako PRAWDZIWĄ zmianę stanu (setSelectedPortId), nie jako
+  // osobno liczoną wartość pomocniczą. Inaczej fetch nabrzeży (zależny
+  // od selectedPortId) i podświetlenie w UI (które liczyło activePortId
+  // niezależnie) rozjeżdżały się o jeden klik - to było źródło "migania"
+  // (klikasz port X, ale fetch wciąż dotyczy poprzednio wybranego portu).
+  useEffect(() => {
+    if (!selectedPortId && ports && ports.length > 0) {
+      setSelectedPortId(ports[0].port_id);
+    }
+  }, [ports, selectedPortId]);
+
   const { data: berths, loading: berthsLoading } = useApiData(
     () => (selectedPortId ? portsApi.berths(selectedPortId) : Promise.resolve([])),
     [selectedPortId]
   );
-
-  const activePortId = selectedPortId || ports?.[0]?.port_id;
 
   return (
     <div className="max-w-5xl mx-auto h-full grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -26,7 +36,7 @@ export default function BerthsPage() {
                 type="button"
                 onClick={() => setSelectedPortId(port.port_id)}
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                  (selectedPortId || ports[0]?.port_id) === port.port_id
+                  selectedPortId === port.port_id
                     ? 'bg-dockwise-steel text-white'
                     : 'hover:bg-dockwise-mist text-dockwise-navy'
                 }`}
@@ -40,7 +50,7 @@ export default function BerthsPage() {
       </GlassPanel>
 
       <GlassPanel title="Nabrzeża" className="md:col-span-2">
-        {!activePortId && <p className="text-dockwise-steel">Wybierz port z listy.</p>}
+        {!selectedPortId && <p className="text-dockwise-steel">Wybierz port z listy.</p>}
         {berthsLoading && <p className="text-dockwise-steel">Wczytywanie nabrzeży…</p>}
 
         {berths && berths.length === 0 && !berthsLoading && (

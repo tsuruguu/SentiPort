@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useApiData } from '../hooks/useApiData';
 import { nominationsApi } from '../api/nominations';
 import { portsApi } from '../api/ports';
@@ -21,27 +21,30 @@ function MailEnvelopeIcon() {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { nominationId: nominationIdFromUrl } = useParams();
   const [actionLoading, setActionLoading] = useState(null);
   const [actionMessage, setActionMessage] = useState(null);
+  const [aiSuggestionsEnabled, setAiSuggestionsEnabled] = useState(true);
 
-  // Bierzemy pierwszą nominację czekającą na przegląd - to jest "aktywne
-  // zgłoszenie" wyświetlane na panelu głównym, analogicznie do mockupu
-  // (jeden konkretny statek na ekranie głównym, resztę widać w Skrzynce).
+  // Jeśli przyszliśmy ze Skrzynki (klik na konkretny mail), URL ma
+  // /panel/:nominationId - używamy tego ID bezpośrednio. Inaczej (wejście
+  // z nawigacji "Panel główny") domyślnie bierzemy pierwszą nominację
+  // czekającą na przegląd, jak dotychczas.
   const { data: listData, loading: listLoading } = useApiData(
-    () => nominationsApi.list({ status: 'parsed_pending_review', limit: 1 }),
-    []
+    () => (nominationIdFromUrl ? Promise.resolve(null) : nominationsApi.list({ status: 'parsed_pending_review', limit: 1 })),
+    [nominationIdFromUrl]
   );
 
-  const activeNomination = listData?.items?.[0];
+  const activeNominationId = nominationIdFromUrl || listData?.items?.[0]?.nomination_id;
 
   const { data: detail, loading: detailLoading, reload: reloadDetail } = useApiData(
-    () => (activeNomination ? nominationsApi.getDetail(activeNomination.nomination_id) : Promise.resolve(null)),
-    [activeNomination?.nomination_id]
+    () => (activeNominationId ? nominationsApi.getDetail(activeNominationId) : Promise.resolve(null)),
+    [activeNominationId]
   );
 
   const { data: berthRecommendations } = useApiData(
-    () => (activeNomination ? nominationsApi.recommendedBerths(activeNomination.nomination_id) : Promise.resolve(null)),
-    [activeNomination?.nomination_id]
+    () => (activeNominationId ? nominationsApi.recommendedBerths(activeNominationId) : Promise.resolve(null)),
+    [activeNominationId]
   );
 
   const handleAccept = async () => {
@@ -95,11 +98,11 @@ export default function DashboardPage() {
     }
   };
 
-  if (listLoading) {
+  if (listLoading || (nominationIdFromUrl && detailLoading && !detail)) {
     return <div className="text-white text-center pt-20">Wczytywanie…</div>;
   }
 
-  if (!activeNomination) {
+  if (!activeNominationId) {
     return (
       <div className="max-w-xl mx-auto mt-20">
         <GlassPanel title="Brak zgłoszeń do przeglądu">
@@ -141,23 +144,32 @@ export default function DashboardPage() {
             className="h-full ml-6"
             title="Sugestie AI"
             headerRight={
-              <label className="flex items-center gap-2 text-sm text-dockwise-steel cursor-pointer select-none">
-                <span>{hasMissingFields ? 'ON' : 'OFF'}</span>
+              <button
+                type="button"
+                onClick={() => setAiSuggestionsEnabled((v) => !v)}
+                className="flex items-center gap-2 text-sm text-dockwise-steel cursor-pointer select-none"
+                aria-pressed={aiSuggestionsEnabled}
+              >
+                <span>{aiSuggestionsEnabled ? 'ON' : 'OFF'}</span>
                 <span
                   className={`relative inline-block w-11 h-6 rounded-full transition-colors ${
-                    hasMissingFields ? 'bg-dockwise-accentGreen' : 'bg-gray-300'
+                    aiSuggestionsEnabled ? 'bg-dockwise-accentGreen' : 'bg-gray-300'
                   }`}
                 >
                   <span
                     className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                      hasMissingFields ? 'translate-x-5' : ''
+                      aiSuggestionsEnabled ? 'translate-x-5' : ''
                     }`}
                   />
                 </span>
-              </label>
+              </button>
             }
           >
-            {detailLoading ? (
+            {!aiSuggestionsEnabled ? (
+              <p className="text-dockwise-steel italic">
+                Sugestie AI są wyłączone. Włącz przełącznik powyżej, żeby zobaczyć dane wyciągnięte z maila.
+              </p>
+            ) : detailLoading ? (
               <p className="text-dockwise-steel">Wczytywanie danych statku…</p>
             ) : (
               <div className="space-y-5">
