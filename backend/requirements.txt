@@ -13,4 +13,4 @@ python-dotenv==1.0.1
 pandas
 imap-tools
 elevenlabs
-reportlab
+reportlab>=4.0.0
