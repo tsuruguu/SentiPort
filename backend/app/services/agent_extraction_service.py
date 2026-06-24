@@ -38,6 +38,31 @@ CONVERSATION_ID_TIMEOUT_SECONDS = 10.0
 CONVERSATION_ID_POLL_INTERVAL_SECONDS = 0.1
 
 
+def _strip_markdown_json_fence(text: str) -> str:
+    """
+    Agenci konwersacyjni czasem (mimo instrukcji w prompcie) owijają
+    odpowiedź w markdown code fence, np.:
+        ```json
+        {...}
+        ```
+    json.loads() na takim tekście wybucha na pierwszym znaku
+    ("Expecting value: line 1 column 1"), bo to nie zaczyna się od `{`.
+    Zdejmujemy fence, jeśli jest - bezpieczne, bo czysty JSON (bez
+    fence) przechodzi przez to bez zmian.
+    """
+    stripped = text.strip()
+    if stripped.startswith("```"):
+        # Usuń pierwszą linię (```json albo samo ```) i ewentualne
+        # zamykające ``` na końcu.
+        lines = stripped.split("\n")
+        if lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        stripped = "\n".join(lines).strip()
+    return stripped
+
+
 def _build_agent_payload(nomination: Nomination) -> dict:
     """
     Buduje payload wysyłany do agenta - wyłącznie dane, które realnie
@@ -219,7 +244,7 @@ def call_extraction_agent(payload: dict, attachments: Optional[List[NominationAt
         raise LLMParsingError(details="Agent zwrócił pustą odpowiedź.")
 
     try:
-        return json.loads(result["text"])
+        return json.loads(_strip_markdown_json_fence(result["text"]))
     except ValueError as exc:
         raise LLMParsingError(details=f"Agent zwrócił niepoprawny JSON: {exc}. Treść: {result['text'][:500]}")
 

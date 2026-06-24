@@ -202,6 +202,61 @@ def test_call_extraction_agent_invalid_json_raises(mock_settings, mock_elevenlab
         })
 
 
+def test_strip_markdown_json_fence_removes_json_fence():
+    text = '```json\n{"vessel_imo": "9456789"}\n```'
+    result = agent_extraction_service._strip_markdown_json_fence(text)
+    assert result == '{"vessel_imo": "9456789"}'
+
+
+def test_strip_markdown_json_fence_removes_plain_fence_without_language_tag():
+    text = '```\n{"vessel_imo": "9456789"}\n```'
+    result = agent_extraction_service._strip_markdown_json_fence(text)
+    assert result == '{"vessel_imo": "9456789"}'
+
+
+def test_strip_markdown_json_fence_leaves_plain_json_unchanged():
+    text = '{"vessel_imo": "9456789"}'
+    result = agent_extraction_service._strip_markdown_json_fence(text)
+    assert result == '{"vessel_imo": "9456789"}'
+
+
+@patch("app.services.agent_extraction_service.Conversation")
+@patch("app.services.agent_extraction_service.ElevenLabs")
+@patch("app.services.agent_extraction_service.settings")
+def test_call_extraction_agent_parses_response_wrapped_in_markdown_fence(
+    mock_settings, mock_elevenlabs_cls, mock_conversation_cls
+):
+    """Reprodukuje realny bug z logów: agent owija odpowiedź w
+    ```json ... ``` mimo instrukcji w prompcie - backend powinien to
+    bezpiecznie zdjąć i sparsować, zamiast wybuchać na pierwszym znaku."""
+    mock_settings.ELEVENLABS_API_KEY = "xi-secret-key"
+    mock_settings.ELEVENLABS_AGENT_ID = "agent_test123"
+
+    mock_conversation = MagicMock()
+    mock_conversation_cls.return_value = mock_conversation
+
+    fenced_response = (
+        '```json\n'
+        '{\n'
+        '  "vessel": {"imo_number": "9175632", "name": "M/V Pomerania Trader"}\n'
+        '}\n'
+        '```'
+    )
+
+    def fake_start_session():
+        callback = mock_conversation_cls.call_args.kwargs["callback_agent_response"]
+        callback(fenced_response)
+
+    mock_conversation.start_session.side_effect = fake_start_session
+
+    result = agent_extraction_service.call_extraction_agent({
+        "nomination_id": "abc",
+        "email": {"subject": "test", "body": "test"},
+    })
+
+    assert result["vessel"]["imo_number"] == "9175632"
+
+
 @patch("app.repositories.vessel_repository.get_vessel_by_imo")
 @patch("app.repositories.port_repository.get_port_by_name_or_locode")
 @patch("app.repositories.company_repository.get_company_by_name")

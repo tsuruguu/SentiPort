@@ -14,6 +14,7 @@ from app.config import settings
 from app.core.exceptions import LLMParsingError, EntityNotFoundError
 from app.models.operations import Nomination
 from app.repositories import vessel_repository, port_repository, country_repository
+from app.services.agent_extraction_service import _strip_markdown_json_fence
 from app.schemas.vessel_enrichment import (
     VesselHistoryPayload, VesselIdentitySnapshot, NameHistoryEntry, TechnicalSpecsSnapshot,
     CompanyRoleEntry, CertificateEntry, PSCInspectionEntry, PSCDeficiencySummary,
@@ -322,7 +323,7 @@ def call_enrichment_agent(payload: VesselHistoryPayload) -> dict:
         raise LLMParsingError(details="Agent wzbogacenia zwrócił pustą odpowiedź.")
 
     try:
-        return json.loads(result["text"])
+        return json.loads(_strip_markdown_json_fence(result["text"]))
     except ValueError as exc:
         raise LLMParsingError(details=f"Agent wzbogacenia zwrócił niepoprawny JSON: {exc}. Treść: {result['text'][:500]}")
 
