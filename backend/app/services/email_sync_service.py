@@ -1,6 +1,7 @@
 import hashlib
 import logging
-from imap_tools import MailBoxUnencrypted, AND
+import ssl
+from imap_tools import MailBoxStartTls, AND
 from sqlalchemy.exc import IntegrityError
 from app.database import SessionLocal
 from app.models.operations import Nomination, NominationAttachment
@@ -33,7 +34,7 @@ def get_email_hash(subject: str, body: str, sender: str, date) -> str:
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
-def _ensure_folder(mailbox: MailBoxUnencrypted, folder_name: str) -> None:
+def _ensure_folder(mailbox: MailBoxStartTls, folder_name: str) -> None:
     """Tworzy folder IMAP, jeśli jeszcze nie istnieje."""
     existing = {f.name for f in mailbox.folder.list()}
     if folder_name not in existing:
@@ -112,13 +113,24 @@ def sync_emails(imap_host: str, user: str, password: str, port: int = 143) -> di
     default_company = db.query(Company).first()
 
     try:
-        # MailBoxUnencrypted (nie MailBox!) - klasa MailBox z imap_tools
-        # ZAWSZE owija połączenie w SSL/TLS niezależnie od podanego portu,
-        # co na plain IMAP (port 143, bez wymuszonego szyfrowania - tak
-        # skonfigurowany jest nasz docker-mailserver) kończy się błędem
-        # "[SSL: WRONG_VERSION_NUMBER]" - serwer odpowiada zwykłym
-        # plain-text greeting, a klient czeka na TLS handshake.
-        with MailBoxUnencrypted(imap_host, port=port).login(user, password) as mailbox:
+        # MailBoxStartTls (nie MailBox, nie MailBoxUnencrypted!) - serwer
+        # wymusza STARTTLS przed LOGIN ("[PRIVACYREQUIRED] Plaintext
+        # authentication disallowed on non-secure connections"), więc
+        # plain IMAP (MailBoxUnencrypted) nie wystarczy. Jednocześnie
+        # MailBox (zwykła, z natychmiastowym SSL/TLS od pierwszego
+        # bajtu) też nie działa, bo port 143 nie mówi TLS-em od razu -
+        # potrzebny jest dokładnie upgrade w trakcie sesji (STARTTLS).
+        #
+        # ssl_context z CERT_NONE: mailserver ma SSL_TYPE=self-signed,
+        # czyli certyfikat nie jest podpisany przez uznane CA - bez tego
+        # STARTTLS odrzuciłby połączenie jako niezaufane. To jest OK w
+        # tym kontekście, bo ruch zostaje wewnątrz sieci Docker
+        # (backend <-> mailserver), nie wychodzi do publicznego internetu.
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+
+        with MailBoxStartTls(imap_host, port=port, ssl_context=ssl_context).login(user, password) as mailbox:
             _ensure_folder(mailbox, IMPORTED_FOLDER)
             _ensure_folder(mailbox, FAILED_FOLDER)
 

@@ -7,6 +7,7 @@ from typing import Optional
 
 from elevenlabs.client import ElevenLabs
 from elevenlabs.conversational_ai.conversation import Conversation, ConversationInitiationData
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -343,4 +344,11 @@ def enrich_nomination_with_vessel_history(db: Session, nomination_id: uuid_modul
 
     payload = build_vessel_history_payload(db, nomination)
     raw_response = call_enrichment_agent(payload)
-    return VesselEnrichmentResponse.model_validate(raw_response)
+
+    try:
+        return VesselEnrichmentResponse.model_validate(raw_response)
+    except ValidationError as exc:
+        raise LLMParsingError(
+            details=f"Agent wzbogacenia zwrócił JSON niezgodny z kontraktem "
+                     f"(VesselEnrichmentResponse): {exc}. Surowa odpowiedź: {json.dumps(raw_response)[:1000]}"
+        )

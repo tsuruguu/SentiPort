@@ -300,6 +300,32 @@ def test_enrich_nomination_full_flow_returns_parsed_response(mock_build_payload,
     assert len(result.inconsistencies_to_clarify) == 1
 
 
+@patch("app.services.vessel_history_enrichment_service.call_enrichment_agent")
+@patch("app.services.vessel_history_enrichment_service.build_vessel_history_payload")
+def test_enrich_nomination_raises_clear_error_when_agent_returns_wrong_shape(mock_build_payload, mock_call_agent):
+    """Reprodukuje realny bug: agent zwrócił proposed_configuration jako
+    OBIEKT (dict pól statku) zamiast LISTY ProposedConfigField - powinno
+    dać jasny LLMParsingError (422) z konkretnym opisem niezgodności,
+    nie surowy ValidationError/500."""
+    mock_db = MagicMock()
+    nomination = _make_nomination()
+    mock_db.query.return_value.filter.return_value.first.return_value = nomination
+
+    mock_build_payload.return_value = _minimal_payload()
+    mock_call_agent.return_value = {
+        "proposed_configuration": {
+            "vessel_name": "Mewa Baltic",
+            "cargo_handling_rate_tph": 0,
+        },
+        "inconsistencies_to_clarify": [],
+    }
+
+    with pytest.raises(LLMParsingError) as exc_info:
+        svc.enrich_nomination_with_vessel_history(mock_db, nomination.nomination_id)
+
+    assert "VesselEnrichmentResponse" in str(exc_info.value.payload)
+
+
 def test_enrich_nomination_raises_when_nomination_missing():
     mock_db = MagicMock()
     mock_db.query.return_value.filter.return_value.first.return_value = None
