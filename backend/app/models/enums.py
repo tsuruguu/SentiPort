@@ -85,3 +85,22 @@ class SanctionsScreeningResult(str, enum.Enum):
     potential_match = 'potential_match'
     confirmed_match = 'confirmed_match'
     false_positive = 'false_positive'
+
+class DocumentType(str, enum.Enum):
+    port_entry_notification = 'port_entry_notification'
+    pre_arrival_notification = 'pre_arrival_notification'
+    cargo_declaration = 'cargo_declaration'
+    dangerous_goods_declaration = 'dangerous_goods_declaration'
+    isps_security_declaration = 'isps_security_declaration'
+    crew_list = 'crew_list'
+    service_request_summary = 'service_request_summary'
+    departure_notification = 'departure_notification'
+    other = 'other'
+
+class DocumentStatus(str, enum.Enum):
+    draft = 'draft'
+    generated = 'generated'
+    sent = 'sent'
+    acknowledged_by_port = 'acknowledged_by_port'
+    rejected_by_port = 'rejected_by_port'
+    superseded = 'superseded'

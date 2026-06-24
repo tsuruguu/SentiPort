@@ -970,7 +970,10 @@ COMMENT ON TABLE port_service_orders IS 'Zamówienia usług portowych: pilotaż,
 
 -- ----------------------------------------------------------------------------
 -- generated_documents: śledzenie dokumentów PDF generowanych dla kapitanatu
--- portu (metadane + link do pliku w object storage, NIE sam plik binarny)
+-- portu. Plik binarny trzymany bezpośrednio w bazie (file_data, BYTEA) - ten
+-- sam wzorzec co nomination_attachments - zero zewnętrznej infrastruktury
+-- storage na etapie hakatonu. file_url zostaje jako opcjonalne pole na
+-- przyszłość (np. link do S3), ale nie jest już jedynym źródłem prawdy.
 -- ----------------------------------------------------------------------------
 CREATE TABLE generated_documents (
                                      document_id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -979,6 +982,8 @@ CREATE TABLE generated_documents (
                                      document_type                    document_type NOT NULL,
                                      status                               document_status NOT NULL DEFAULT 'draft',
                                      version_number                         INTEGER NOT NULL DEFAULT 1,
+                                     filename                                  VARCHAR(255),
+                                     file_data                                    BYTEA,          -- surowa treść PDF
                                      file_url                                  TEXT,           -- link do S3/storage
                                      file_hash_sha256                             VARCHAR(64),    -- integralność pliku
                                      generated_by                                    VARCHAR(150),   -- 'system_auto' / nazwa agenta

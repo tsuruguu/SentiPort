@@ -4,7 +4,8 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.sql import func
 from app.models.base import Base
-from app.models.enums import NominationStatus, ImdgHazardClass, PortServiceType, ServiceOrderStatus
+from app.models.enums import NominationStatus, ImdgHazardClass, PortServiceType, ServiceOrderStatus, \
+    DocumentType, DocumentStatus
 
 
 class Nomination(Base):
@@ -144,5 +145,45 @@ class NominationAttachment(Base):
     # ponownym wywołaniu /extract dla tej samej nominacji.
     sent_to_agent_at = Column(DateTime(timezone=True))
     agent_file_id = Column(String(100))  # file_id zwrócony przez ElevenLabs
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class GeneratedDocument(Base):
+    """
+    Dokument PDF wygenerowany dla kapitanatu portu (zawiadomienie o
+    wejściu, deklaracja ładunku, towary niebezpieczne, ISPS, lista
+    załogi, zestawienie usług, zawiadomienie o wyjściu...).
+
+    Plik binarny trzymany bezpośrednio w bazie (file_data) - ten sam
+    wzorzec co NominationAttachment, zero zewnętrznej infrastruktury
+    storage na etapie hakatonu. file_hash_sha256 pozwala zweryfikować
+    integralność pliku (czy nie został zmodyfikowany po wygenerowaniu).
+    """
+    __tablename__ = "generated_documents"
+    __table_args__ = {"schema": "port_intel"}
+
+    document_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    nomination_id = Column(UUID(as_uuid=True), ForeignKey("port_intel.nominations.nomination_id", ondelete="CASCADE"))
+    port_call_id = Column(UUID(as_uuid=True))
+    document_type = Column(SQLEnum(DocumentType, name="document_type", schema="port_intel", create_type=False),
+                           nullable=False)
+    status = Column(SQLEnum(DocumentStatus, name="document_status", schema="port_intel", create_type=False),
+                    default=DocumentStatus.draft, nullable=False)
+    version_number = Column(Integer, default=1, nullable=False)
+
+    filename = Column(String(255))
+    file_data = Column(LargeBinary)  # surowa treść PDF (BYTEA w Postgresie)
+    file_url = Column(Text)          # opcjonalny link do zewnętrznego storage (na przyszłość)
+    file_hash_sha256 = Column(String(64))
+
+    generated_by = Column(String(150))  # 'system_auto' albo nazwa agenta portowego
+    generated_at = Column(DateTime(timezone=True), server_default=func.now())
+    sent_at = Column(DateTime(timezone=True))
+    sent_to_email = Column(String(200))
+    acknowledged_at = Column(DateTime(timezone=True))
+    acknowledged_by = Column(String(150))
+    rejection_reason = Column(Text)
+    supersedes_document_id = Column(UUID(as_uuid=True))
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
